@@ -4,7 +4,7 @@ OCAMLDEP=ocamldep
 OCAMLLEX=ocamllex
 OCAMLYACC=ocamlyacc
 
-APPLI_OBJS=types.cmo lexer.cmo parser.cmo eval.cmo main.cmo
+APPLI_OBJS=types.cmo lexer.cmo parser.cmo eval.cmo output.cmo main.cmo 
 
 appli.exe:$(APPLI_OBJS)
 	$(OCAMLC) -o glowy $(APPLI_OBJS)
@@ -31,13 +31,17 @@ lexer.cmo:lexer.ml parser.cmi
 	$(OCAMLC) -c lexer.ml
 
 eval.cmo:eval.ml
-	$(OCAMLC) -c eval.ml
+	$(OCAMLC) -c eval.ml	
+	
+output.cmo:output.ml
+	$(OCAMLC) -c output.ml
 
 main.cmo:main.ml
 	$(OCAMLC) -c main.ml
 
+
 clean:
-	$(RM) types.cmo lexer.cmo parser.cmo eval.cmo main.cmo types.cmi lexer.cmi parser.cmi eval.cmi main.cmi parser.mli parser.ml lexer.ml
+	$(RM) types.cmo lexer.cmo parser.cmo eval.cmo main.cmo types.cmi lexer.cmi parser.cmi eval.cmi main.cmi parser.mli parser.ml lexer.ml output.cmo output.cmi
 	
 mrproper: clean
 	$(RM) glowy

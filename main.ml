@@ -3,12 +3,14 @@
         | Damien PICARD
         | Benjamin ZIGH
 *)
+
 let rec loop () =
   try
     print_string ">>> " ; 
-    Eval.examine (Parser.line Lexer.lexer (
+    let a = Eval.examine (Parser.line Lexer.lexer (
       (Lexing.from_string (read_line () ^"\n")))
-    ) ;
+    ) in
+    Output.print_term a;
     loop ()
   with End_of_file -> ()
 ;;
