@@ -5,7 +5,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
                                          (* détecter des lexèmes dans un flux de caractères *)
 
   | [' ' '\t']          {lexer lexbuf}   (* lexème éludé ; la fonction est rappelée récursivement *)
-
+  | '\n'                {Leol}
   | "True"              {Ltrue}
   | "False"             {Lfalse}
   | "if"                {Lif}

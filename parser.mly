@@ -11,6 +11,7 @@
 %token Lsucc
 %token Lpred
 %token LisZero
+%token Leol
 
 %start line                       /* axiome */
 %type <Types.terme> line    /* type de l'attribut de l'axiome */  
@@ -18,18 +19,15 @@
 %%
 
 line :
-  | prop Leol            {$1}
+  | terme Leol            {$1}
 
-prop :
-  | prop Lequiv prop     {Equiv ($1, $3)}
-  | prop Linvolve prop   {Involve ($1, $3)}
-  | prop Lor prop        {Or ($1, $3)}
-  | prop Land prop       {And ($1, $3)}
-  | Lnot prop            {Not $2}
-  | Llpar prop Lrpar     {$2}
-  | Ltrue                {True}
-  | Lfalse               {False}
-  | Lident               {Var $1}
-
+terme :
+    | Ltrue               {True}
+    | Lfalse              {False}
+    | Lzero               {Zero}
+    | Lif terme Lthen terme Lelse terme {Cond ($2, $4, $6)}
+    | Lsucc terme         {Succ $2}
+    | Lpred terme         {Pred $2}
+    | LisZero terme       {IsZero $2}
 %%
  
