@@ -11,7 +11,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | "if"                {Lif}
   | "then"              {Lthen}
   | "else"              {Lelse}
-  | ['0' - '9']+ as num {Lnum(int_of_string num)}
+  | '0'                 {LZero}
   | "succ"              {Lsucc}
   | "pred"              {Lpred}
   | "isZero"            {Lztest}

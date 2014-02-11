@@ -1,11 +1,9 @@
-(* TODO *)
-type proposition =
+type terme =
   | True
   | False
-  | Not of proposition
-  | And of proposition * proposition
-  | Or of proposition * proposition
-  | Involve of proposition * proposition
-  | Equiv of proposition * proposition
-  | Var of string
+  | Zero
+  | Cond of terme * terme * terme
+  | Succ of terme 
+  | Pred of terme
+  | IsZero of terme
 ;; 
