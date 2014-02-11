@@ -9,8 +9,8 @@ let print_term param =
             | Zero -> "Zero"
             | Cond (t1, t2, t3) -> "If (" ^ (aux t1) ^ ")\n\tthen " ^ (aux t2)
                                 ^ "\n\t" ^ (aux t3)
-            | Succ t -> "Succ (" ^ (aux t) ^ ")"
-            | Pred t -> "Pred (" ^ (aux t) ^ ")"
-            | IsZero t -> "Pred (" ^ (aux t) ^ ")"
+            | Succ t -> "Succ(" ^ (aux t) ^ ")"
+            | Pred t -> "Pred(" ^ (aux t) ^ ")"
+            | IsZero t -> "isZero(" ^ (aux t) ^ ")"
     in print_endline (aux param)
 ;;
