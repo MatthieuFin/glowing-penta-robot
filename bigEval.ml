@@ -5,13 +5,14 @@
 *)
 open Types;;
 
+(* Évaluation bigStep d'un terme *)
 let rec bigEval1 term = 
     match term with
         | True -> term
         | False -> term
         | Zero -> term
         | Cond(t1, t2, t3) when ((bigEval1 t1) == True) -> bigEval1 t2
-        | Cond(t1, t2, t3) when ((bigEval1 t1 ) == False) -> bigEval1 t3
+        | Cond(t1, t2, t3) when ((bigEval1 t1) == False) -> bigEval1 t3
         | Succ t -> Succ (bigEval1 t)
         | Pred t  -> (match (bigEval1 t) with 
                         | Zero -> Zero
