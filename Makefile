@@ -7,7 +7,7 @@ OCAMLYACC=ocamlyacc
 APPLI_OBJS=types.cmo lexer.cmo parser.cmo eval.cmo main.cmo
 
 appli.exe:$(APPLI_OBJS)
-	$(OCAMLC) -o appli.exe $(APPLI_OBJS)
+	$(OCAMLC) -o glowy $(APPLI_OBJS)
 
 types.cmo:types.ml
 	$(OCAMLC) -c types.ml
@@ -38,3 +38,6 @@ main.cmo:main.ml
 
 clean:
 	$(RM) types.cmo lexer.cmo parser.cmo eval.cmo main.cmo types.cmi lexer.cmi parser.cmi eval.cmi main.cmi parser.mli parser.ml lexer.ml
+	
+mrproper: clean
+	$(RM) glowy
