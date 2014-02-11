@@ -11,8 +11,8 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | "if"                {Lif}
   | "then"              {Lthen}
   | "else"              {Lelse}
-  | '0'                 {LZero}
+  | '0'                 {Lzero}
   | "succ"              {Lsucc}
   | "pred"              {Lpred}
-  | "isZero"            {Lztest}
+  | "isZero"            {LisZero}
 

@@ -1,28 +1,19 @@
-/* TODO */
 %{
   open Types ;;
 %}
 
-%token Leol
-%token Llpar
-%token Lrpar
-%token Lnot
-%token Linvolve
-%token Lequiv
-%token Land
-%token Lor
 %token Ltrue
 %token Lfalse
-%token <string> Lident            /* type de l'attribut fourni par le lexer */
-
-%left Lequiv                      /* gestion des règles d'associativité */
-%left Linvolve                    /* et de priorité permettant de lever */  
-%left Lor                         /* les conflits dûs à l'ambiguïté de  */ 
-%left Land                        /* la grammaire */
-%right Lnot
+%token Lif
+%token Lthen
+%token Lelse
+%token Lzero
+%token Lsucc
+%token Lpred
+%token LisZero
 
 %start line                       /* axiome */
-%type <Types.proposition> line    /* type de l'attribut de l'axiome */  
+%type <Types.terme> line    /* type de l'attribut de l'axiome */  
 
 %%
 
