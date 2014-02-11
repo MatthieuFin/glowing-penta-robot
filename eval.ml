@@ -1,5 +1,9 @@
+(*
+    Auteurs:
+        | Damien PICARD
+        | Benjamin ZIGH
+*)
 open Types;;
-(* TODO *)
 let rec eval1 t = 
     match t with
       | True -> t

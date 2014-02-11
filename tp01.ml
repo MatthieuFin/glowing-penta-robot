@@ -1,5 +1,7 @@
 (*
-  Auteurs: Damien Picard & Benjamin Zigh
+  Auteurs:
+    | Damien Picard 
+    | Benjamin Zigh
 *)
 exception NotTauto of string;;
 

@@ -1,3 +1,8 @@
+(*
+    Auteurs:
+        | Damien PICARD
+        | Benjamin ZIGH
+*)
 type terme =
   | True
   | False

@@ -1,4 +1,8 @@
-(* TODO *)
+(*
+    Auteurs:
+        | Damien PICARD
+        | Benjamin ZIGH
+*)
 let rec loop () =
   try
     print_string ">>> " ; 

@@ -1,3 +1,8 @@
+(*
+    Auteurs:
+        | Damien PICARD
+        | Benjamin ZIGH
+*)
 {
   open Parser ;;
 }
