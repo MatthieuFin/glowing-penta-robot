@@ -19,13 +19,12 @@ let rec eval1 t =
       | IsZero Zero -> True
       | IsZero (Succ v) -> False (*ATTENTION: on ne vérifie pas que v est une valeur *)
       | IsZero t1 -> IsZero (eval1 t1)
-      | _ -> t
 ;;
 
 
 let rec examine param =
-    match eval1 param with
-        | param -> param
+    match (eval1 param) with
+        | evalres when evalres = param -> param
         | _ -> examine (eval1 param) 
 ;;
 
