@@ -20,9 +20,9 @@ let print_term param =
           (getIndent i) ^ "if\n" ^ (aux t1 (i + 1)) 
           ^ (getIndent i) ^ "then\n" ^ (aux t2 (i + 1))
           ^ (getIndent i) ^ "else\n" ^ (aux t3 (i + 1))
-      | Succ t -> (getIndent i) ^ "succ\n" ^ (aux t (i + 1))
-      | Pred t -> (getIndent i) ^ "pred\n" ^ (aux t (i + 1))
-      | IsZero t -> (getIndent i) ^ "isZero\n" ^ (aux t (i + 1))
+      | Succ t -> (getIndent i) ^ "succ " ^ (aux t (i + 1))
+      | Pred t -> (getIndent i) ^ "pred " ^ (aux t (i + 1))
+      | IsZero t -> (getIndent i) ^ "isZero " ^ (aux t (i + 1))
   in
     print_string (aux param 0)
 ;;
