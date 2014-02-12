@@ -3,12 +3,11 @@
         | Damien PICARD
         | Benjamin ZIGH
 *)
-type terme =
-  | True
-  | False
-  | Zero
-  | Cond of terme * terme * terme
-  | Succ of terme 
-  | Pred of terme
-  | IsZero of terme
+
+type var = char;;
+
+type term =
+  | Var of var
+  | App of term * term
+  | Lambda of var * term
 ;; 
