@@ -4,10 +4,8 @@
         | Benjamin ZIGH
 *)
 
-type var = char;;
-
 type term =
-  | Var of var
+  | Var of string
   | App of term * term
-  | Lambda of var * term
-;; 
+  | Lambda of string * term
+;;

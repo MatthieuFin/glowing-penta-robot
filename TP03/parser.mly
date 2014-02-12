@@ -7,32 +7,40 @@
   open Types ;;
 %}
 
-%token Ltrue
-%token Lfalse
-%token Lif
-%token Lthen
-%token Lelse
-%token Lzero
-%token Lsucc
-%token Lpred
-%token LisZero
 %token Leol
+%token Llambda
+%token Lleftp
+%token Lrightp
+%token <string> Lident
 
 %start line                       /* axiome */
-%type <Types.terme> line    /* type de l'attribut de l'axiome */  
+%type <Types.term> line    /* type de l'attribut de l'axiome */  
 
 %%
 
 line :
-  | terme Leol            {$1}
+    | functerm Leol            {$1}  
+    
+    
+functerm :
+    | term Llambda Lident functerm  {Lambda ($3,$4)}
+    | term           {$1}
+    
 
-terme :
-    | Ltrue               {True}
-    | Lfalse              {False}
-    | Lzero               {Zero}
-    | Lif terme Lthen terme Lelse terme {Cond ($2, $4, $6)}
-    | Lsucc terme         {Succ $2}
-    | Lpred terme         {Pred $2}
-    | LisZero terme       {IsZero $2}
+
+    
+term :
+    | elemterm                 {$1}
+    | term elemterm            {App ($1,$2)}
+    |                           {}
+
+elemterm :
+    | Lident               {Var $1}
+
+
+
+    
+    
+
 %%
  

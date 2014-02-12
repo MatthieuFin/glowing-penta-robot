@@ -11,13 +11,8 @@ rule lexer = parse                       (* nom de la fonction construite par oc
 
   | [' ' '\t']          {lexer lexbuf}   (* lexème éludé ; la fonction est rappelée récursivement *)
   | '\n'                {Leol}
-  | "True"              {Ltrue}
-  | "False"             {Lfalse}
-  | "if"                {Lif}
-  | "then"              {Lthen}
-  | "else"              {Lelse}
-  | "Zero"              {Lzero}
-  | "succ"              {Lsucc}
-  | "pred"              {Lpred}
-  | "isZero"            {LisZero}
+  | "lambda"            {Llambda}
+  | '('                 {Lleftp}
+  | ')'                 {Lrightp}
+  | ['a'-'z' 'A'-'Z']+  {Lident (Lexing.lexeme lexbuf)}
 
