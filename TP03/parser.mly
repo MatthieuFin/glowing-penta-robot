@@ -5,9 +5,11 @@
 */
 %{
   open Types ;;
+  open Tools ;;
 %}
 
 %token Leol
+%token Lcomm
 %token Llambda
 %token Lleftp
 %token Lrightp
@@ -19,28 +21,30 @@
 %%
 
 line :
-    | functerm Leol            {$1}  
-    
-    
-functerm :
-    | term Llambda Lident functerm  {Lambda ($3,$4)}
-    | term           {$1}
-    
+    | term Leol            {$1}
+    | declare Leol         {$1}
 
 
-    
 term :
+    | functerm                 {$1} 
+    | appterm functerm         {App ($1, $2)}
+
+appterm :
     | elemterm                 {$1}
-    | term elemterm            {App ($1,$2)}
-    |                           {}
+    | appterm elemterm         {App ($1,$2)}
+   
+functerm :
+    | Llambda Lident '.' term  {Lambda ($2,$4)}
+    | elemterm                 {$1} 
 
 elemterm :
-    | Lident               {Var $1}
-
-
-
+    | Lident                   {Var ($1)}
+    | '(' term ')'             {$2}
     
-    
+/* Ajout des déclarations */
+
+declare :
+    | 'let' Lident '=' term    {(Tools.declare $2 $4); $4}
 
 %%
  

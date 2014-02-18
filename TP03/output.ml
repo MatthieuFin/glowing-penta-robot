@@ -10,19 +10,8 @@ let getIndent i =
     aux i ""
 ;;
 
-let print_term param = 
-  let rec aux term i  =
-    match term with
-      | Zero -> (getIndent i) ^ "Zero\n"
-      | True -> (getIndent i) ^ "True\n"
-      | False -> (getIndent i) ^ "False\n"
-      | Cond (t1, t2, t3) ->
-          (getIndent i) ^ "if\n" ^ (aux t1 (i + 1)) 
-          ^ (getIndent i) ^ "then\n" ^ (aux t2 (i + 1))
-          ^ (getIndent i) ^ "else\n" ^ (aux t3 (i + 1))
-      | Succ t -> (getIndent i) ^ "succ " ^ (aux t (i + 1))
-      | Pred t -> (getIndent i) ^ "pred " ^ (aux t (i + 1))
-      | IsZero t -> (getIndent i) ^ "isZero " ^ (aux t (i + 1))
-  in
-    print_string (aux param 0)
-;;
+(*TODO affichage du terme*)
+let print_term param =
+    match param with 
+        | Var x  -> print_string x
+        | _  -> print_string "autre";;
