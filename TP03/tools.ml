@@ -21,3 +21,7 @@ let rec getValue t =
   Lambda ("x", Var "a")
 ;;
 
+let declare var valuel =
+  Var var
+;;
+

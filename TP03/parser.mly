@@ -13,6 +13,9 @@
 %token Llambda
 %token Lleftp
 %token Lrightp
+%token Ldot
+%token Lequal
+%token Llet
 %token <string> Lident
 
 %start line                       /* axiome */
@@ -24,7 +27,6 @@ line :
     | term Leol            {$1}
     | declare Leol         {$1}
 
-
 term :
     | functerm                 {$1} 
     | appterm functerm         {App ($1, $2)}
@@ -34,17 +36,17 @@ appterm :
     | appterm elemterm         {App ($1,$2)}
    
 functerm :
-    | Llambda Lident '.' term  {Lambda ($2,$4)}
+    | Llambda Lident Ldot term  {Lambda ($2,$4)}
     | elemterm                 {$1} 
 
 elemterm :
     | Lident                   {Var ($1)}
-    | '(' term ')'             {$2}
+    | Lleftp term Lrightp             {$2}
     
 /* Ajout des déclarations */
 
 declare :
-    | 'let' Lident '=' term    {(Tools.declare $2 $4); $4}
+    | Llet Lident Lequal term    {(Tools.declare $2 $4)}
 
 %%
  
