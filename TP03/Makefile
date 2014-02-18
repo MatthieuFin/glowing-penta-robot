@@ -6,7 +6,7 @@ OCAMLYACC=ocamlyacc
 
 APPLI_OBJS=types.cmo tools.cmo lexer.cmo parser.cmo eval.cmo output.cmo main.cmo 
 BIG_APPLI_OBJS= types.cmo tools.cmo lexer.cmo parser.cmo bigEval.cmo output.cmo bigMain.cmo 
-APPLI_INTERFACES= bigEval.cmi bigMain.cmi eval.cmi lexer.cmi output.cmi parser.cmi types.cmi main.cmi 
+APPLI_INTERFACES= bigEval.cmi bigMain.cmi eval.cmi lexer.cmi output.cmi parser.cmi types.cmi main.cmi tools.cmi
 OTHERS_FILES=lexer.ml  parser.ml parser.mli
 
 all: glowy bigGlowy
