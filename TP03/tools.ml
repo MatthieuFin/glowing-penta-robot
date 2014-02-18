@@ -15,15 +15,20 @@ let declare (alias : string) (value : term) =
     value
 ;;
 
-(* Remplace les occurence d'une variable par sa valeur *)
+(* Remplace les occurence de x (un nom de variable) 
+   dans t (un terme) par y (un terme) *)
 let rec substitute x y t =
-  Var "x"
+    match t with
+      | Var z when z = x -> y
+      | Var z -> Var z
+      | App (i, j) -> App ((substitute x y i), (substitute x y j))
+      | _ -> Var "en-cours"
 ;;
 
 (* Donne la valeur d'une variable *)
 let getValue alias = 
     try Hashtbl.find tblOfSymbols alias
-    with _ -> Var alias
+    with Not_found -> Var alias
 ;;
 
 
