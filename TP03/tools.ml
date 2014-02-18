@@ -5,8 +5,6 @@
 *)
 open Types ;;
 
-exception UnboundValue;;
-
 let tblOfSymbols = Hashtbl.create 1;;
 
 (*TODO Affecte la valeur value a l'alias alias *)
@@ -15,7 +13,7 @@ let declare (alias : string) (value : term) =
     value
 ;;
 
-(* Remplace les occurence de x (un nom de variable) 
+(* Remplace les occurence de x (un nom de variable formel) 
    dans t (un terme) par y (un terme) *)
 let rec substitute x y t =
     match t with
