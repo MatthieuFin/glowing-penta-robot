@@ -4,15 +4,19 @@
         | Benjamin ZIGH
 *)
 
-let rec loop () =
+let rec loop channel =
   try
-    print_string ">>> " ; 
-    let a = Eval.examine (Parser.line Lexer.lexer (
-      (Lexing.from_string (read_line () ^"\n")))
+    let a = Eval.examine (Parser.line Lexer.lexer ((Lexing.from_channel channel))
     ) in
     Output.print_term a;
-    loop ()
-  with End_of_file -> ()
+    loop channel
+  with Lexer.Eof -> 
+    close_in channel;
 ;;
-
-let _ = loop () ;; 
+let channel =
+    match (Array.length Sys.argv) with
+      | 1 -> stdin
+      | 2 -> (open_in (Sys.argv.(1)))
+      | _ -> failwith "Nombre de paramêtres incorrects"
+in
+loop channel ;; 
