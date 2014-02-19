@@ -7,7 +7,7 @@ open Types;;
 open Tools;;
 
 
-(*TODO Ca marche ce truc? qui l'a fait?*)
+(* Evaluation d'un pas (small-step) *)
 let rec eval1 term =
     match term with
       | Var x -> getValue x 

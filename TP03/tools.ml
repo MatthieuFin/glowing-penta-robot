@@ -7,20 +7,20 @@ open Types ;;
 
 let tblOfSymbols = Hashtbl.create 1;;
 
-(*TODO Affecte la valeur value a l'alias alias *)
+(* Affecte la valeur value a l'alias alias *)
 let declare (alias : string) (value : term) = 
     Hashtbl.replace tblOfSymbols alias value;
     value
 ;;
 
-(* Remplace les occurence de x (un nom de variable formel) 
+(* Remplace les occurence de x (un nom de variable formelle) 
    dans t (un terme) par y (un terme) *)
-let rec substitute x y t =
+let rec substitute t1 t2 t =
     match t with
-      | Var z when z = x -> y
-      | Var z -> Var z
-      | App (i, j) -> App ((substitute x y i), (substitute x y j))
-      | _ -> Var "en-cours"
+      | Var x when x = t1 -> t2
+      | App (t3, t4) -> App ((substitute t1 t2 t3), (substitute t1 t2 t4))
+      | Lambda (x, t3) when x <> t1 -> Lambda (x, (substitute t1 t2 t3))
+      | _ -> t
 ;;
 
 (* Donne la valeur d'une variable *)
