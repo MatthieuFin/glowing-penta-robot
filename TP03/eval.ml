@@ -17,5 +17,11 @@ let rec eval1 term =
 ;; 
 
 
-(*TODO La boucle sur les small step et l'evaluation call by value*)
-let examine t = eval1 t;;
+
+let examine t = 
+    match eval1 t with
+        | t -> t
+        | _ -> examine (eval1 t)
+;;
+
+let eval param = examine param;;

@@ -22,10 +22,10 @@ let rec eval1 t =
 ;;
 
 
-let rec examine param =
-    match (eval1 param) with
-        | evalres when evalres = param -> param
-        | _ -> examine (eval1 param) 
+let examine t = 
+    match eval1 t with
+        | t -> t
+        | _ -> examine (eval1 t)
 ;;
 
 let eval param = examine param;;
