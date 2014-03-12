@@ -11,7 +11,11 @@ let getIndent i =
     aux i ""
 ;;
 
-
+let rec type_to_string typ =
+    match typ with
+      | Bool -> "Bool"
+      | Nat -> "Nat"
+;;
 
 (*TODO revoir affichage des termes pour faire un truc joli*)
 let rec term_to_string term =
@@ -28,14 +32,9 @@ let rec term_to_string term =
       | IsZero (n) -> "IsZero " ^ (term_to_string n)
       | Var (s) -> s
       | App (t1, t2) -> (term_to_string t1) ^ " " ^ (term_to_string t2)
-      | Lambda (typ, var, t) -> "λ" ^ var ^ ":" ^ typ ^ "." ^ (term_to_string t)
+      | Lambda (typ, var, t) -> "λ" ^ var ^ ":" ^ (type_to_string typ) ^ "." ^ (term_to_string t)
 ;;
 
-let rec type_to_string typ =
-    match typ with
-      | Bool -> "Bool"
-      | Nat -> "Nat"
-;;
 
 let print_term term =
     print_endline ((term_to_string term) ^ (type_to_string (typeof term)))
