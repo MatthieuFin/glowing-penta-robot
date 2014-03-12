@@ -3,7 +3,7 @@
         | Damien PICARD
         | Benjamin ZIGH
 *)
-(* TODO ajouter les lexemes du TP2  *)
+
 {
   open Parser ;;
   exception Eof;;
@@ -12,7 +12,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
                                          (* détecter des lexèmes dans un flux de caractères *)
 
   | [' ' '\t']          {lexer lexbuf}   (* lexème éludé ; la fonction est rappelée récursivement *)
-  | '\n'                {Leol}
+  | '\r'?'\n'           {Leol}
   | "(*" [^'\n']* "*)"  {lexer lexbuf}               
   | '#' [^'\n']* '\n' ? {lexer lexbuf}
   | '('                 {Lleftp}
@@ -21,6 +21,19 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | "let"               {Llet}
   | '='                 {Lequal}
   | "lambda"            {Llambda}
+  | ':'                 {Lsemcol}
   | ['a'-'z' 'A'-'Z']+  {Lident (Lexing.lexeme lexbuf)}
   | eof                 {raise Eof}
+  | "True"              {Ltrue}
+  | "False"             {Lfalse}
+  | "if"                {Lif}
+  | "then"              {Lthen}
+  | "else"              {Lelse}
+  | "Zero"              {Lzero}
+  | "succ"              {Lsucc}
+  | "pred"              {Lpred}
+  | "isZero"            {LisZero}
+  | "Bool"              {Lbool}
+  | "Nat"               {Lnat}
   | _ as c              {(Printf.printf "Erreur : %c" c);Leol}
+

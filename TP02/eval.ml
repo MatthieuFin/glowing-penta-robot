@@ -22,7 +22,7 @@ let rec eval1 t =
 ;;
 
 
-let examine t = 
+let rec examine t = 
     match eval1 t with
         | t -> t
         | _ -> examine (eval1 t)

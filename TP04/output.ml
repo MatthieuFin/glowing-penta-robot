@@ -16,7 +16,7 @@ let getIndent i =
 let rec term_to_string term =
     match term with
       | Var x -> x
-      | Lambda (x, y) -> "λ" ^ x ^ ". " ^ (term_to_string y)
+      | Lambda (t, x, y) -> "λ" ^ x ^ ". " ^ (term_to_string y)
       | App (x, y) -> (term_to_string x) ^ " " ^(term_to_string y)
 ;;
 

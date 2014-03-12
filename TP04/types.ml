@@ -7,29 +7,22 @@
 (* TODO faire un truc intelligent *)
 (* est ce qu'on sépare les types au niveau du caml ou
    on gerera directement dans notre programme? *)
-type termite =
-  | True
-  | False
-  | Zero
-  | Cond of termite * termite * termite
-  | Succ of termite 
-  | Pred of termite
-  | IsZero of termite
+
+type glowyType =
+    | Bool
+    | Nat
 ;;
 
-type terminator =
-  | Var of string
-  | App of terminator * terminator
-  | Lambda of string * terminator
-;;
-
-type terminal =
-    | terminator
-    | termite
-;;
 
 type term = 
+    | True
+    | False
+    | Zero
+    | Cond of term * term * term
+    | Succ of term 
+    | Pred of term
+    | IsZero of term
     | Var of string
-    | App of terminal * terminal
-    | Lambda of string * terminal
+    | App of term * term
+    | Lambda of glowyType * string * term
 ;;
