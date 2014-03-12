@@ -4,12 +4,12 @@ OCAMLDEP=ocamldep
 OCAMLLEX=ocamllex
 OCAMLYACC=ocamlyacc
 
-APPLI_OBJS=types.cmo tools.cmo lexer.cmo parser.cmo eval.cmo output.cmo main.cmo 
+APPLI_OBJS=types.cmo tools.cmo lexer.cmo parser.cmo typeChecker.cmo eval.cmo output.cmo main.cmo 
 BIG_APPLI_OBJS= types.cmo tools.cmo lexer.cmo parser.cmo bigEval.cmo output.cmo bigMain.cmo 
-APPLI_INTERFACES= bigEval.cmi bigMain.cmi eval.cmi lexer.cmi output.cmi parser.cmi types.cmi main.cmi tools.cmi
+APPLI_INTERFACES= bigEval.cmi bigMain.cmi eval.cmi lexer.cmi output.cmi typeChecker.cmi parser.cmi types.cmi main.cmi tools.cmi
 OTHERS_FILES=lexer.ml  parser.ml parser.mli
 
-all: glowy bigGlowy
+all: glowy
 
 glowy:$(APPLI_OBJS)
 	$(OCAMLC) -o glowy $^
@@ -19,7 +19,7 @@ bigGlowy:$(BIG_APPLI_OBJS)
 
 types.cmo:types.ml
 	$(OCAMLC) -c $^
-	
+
 tools.cmo:tools.ml
 	$(OCAMLC) -c $^
 
@@ -54,6 +54,9 @@ bigMain.cmo:bigMain.ml
 	$(OCAMLC) -c $^
 
 main.cmo:main.ml
+	$(OCAMLC) -c $^
+	
+typeChecker.cmo: typeChecker.ml
 	$(OCAMLC) -c $^
 
 clean:
