@@ -11,7 +11,7 @@
 type glowyType =
     | Bool
     | Nat
-    | AppType glowyType * glowyType
+    | AppType of glowyType * glowyType
 ;;
 
 type optType =
