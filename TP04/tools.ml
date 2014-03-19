@@ -13,18 +13,18 @@ let declare (alias : string) (value : term) =
     value
 ;;
 
-(* Remplace les occurence de x (un nom de variable formelle) 
-   dans t (un terme) par y (un terme) *)
+(* Remplace les occurence de t1 (un nom de variable formelle) 
+   dans t (un terme) par t2 (un terme) *)
 let rec substitute ty t1 t2 t = 
     match t with
       | Var x when x = t1 -> t2
-      | App (t3, t4) -> App ((substitute t1 t2 t3), (substitute t1 t2 t4))
-      | Lambda (x, t3) when x <> t1 -> Lambda (x, (substitute t1 t2 t3))
-      | Pred
-      | IsZero
-      | Succ
-      | Cond
-      | _ -> t
+      | App (t3, t4) -> App ((substitute ty t1 t2 t3), (substitute ty t1 t2 t4))
+      | Lambda (ty, x, t3) when x <> t1 -> Lambda (ty, x, (substitute ty t1 t2 t3))
+      | Pred x -> Pred (substitute ty t1 t2 t)
+      | IsZero x -> IsZero (substitute ty t1 t2 t)
+      | Succ x -> Succ (substitute ty t1 t2 t)
+      | Cond (bo, tr, fa) -> Cond ((substitute ty t1 t2 bo), (substitute ty t1 t2 tr), (substitute ty t1 t2 fa))
+      | _-> t
 ;;
 
 (* Donne la valeur d'une variable *)

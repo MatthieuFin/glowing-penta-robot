@@ -17,7 +17,7 @@ let rec eval1 t =
       | Cond (False, t1, t2) -> t2
       | Cond (t1, t2, t3) -> Cond ((eval1 t1), t2, t3)
       | Succ t1 -> Succ (eval1 t1)
-      | Pred (Succ v) when (v != True) && (v != False) -> v
+      | Pred (Succ t1)  -> t1
       | Pred Zero -> Zero
       | Pred t1 -> Pred (eval1 t1)
       | IsZero Zero -> True
