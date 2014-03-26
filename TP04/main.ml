@@ -5,13 +5,15 @@
 *)
 
 let rec loop channel =
-  try
-    let a = Eval.examine (Parser.line Lexer.lexer ((Lexing.from_channel channel))
-    ) in
-    Output.print_term a;
+    begin
+    try
+        let a = Eval.examine (Parser.line Lexer.lexer channel
+        ) in
+        Output.print_term a
+    with TypeChecker.Bad_Type ->
+        print_endline "Mal typé"
+    end;
     loop channel
-  with Lexer.Eof -> 
-    close_in channel;
 ;;
 let channel =
     match (Array.length Sys.argv) with
@@ -19,4 +21,8 @@ let channel =
       | 2 -> (open_in (Sys.argv.(1)))
       | _ -> failwith "Nombre de paramêtres incorrects"
 in
-loop channel ;; 
+try
+    loop (Lexing.from_channel channel) 
+with Lexer.Eof -> 
+    close_in channel
+;;

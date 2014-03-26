@@ -15,6 +15,7 @@ let rec type_to_string typ =
     match typ with
       | Bool -> "Bool"
       | Nat -> "Nat"
+      | AppType (t1,t2) -> (type_to_string t1)^" -> "^(type_to_string t2) 
 ;;
 
 (*TODO revoir affichage des termes pour faire un truc joli*)
@@ -37,5 +38,5 @@ let rec term_to_string term =
 
 
 let print_term term =
-    print_endline ((term_to_string term) ^ (type_to_string (typeof term)))
+    print_endline ((term_to_string term) ^ " : " ^ (type_to_string (decapsuleur (typeof term))))
 ;;

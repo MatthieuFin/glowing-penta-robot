@@ -23,8 +23,12 @@ let rec eval1 t =
       | IsZero Zero -> True
       | IsZero (Succ v) -> False (*ATTENTION: on ne vérifie pas que v est une valeur *)
       | IsZero t1 -> IsZero (eval1 t1)
-      | Var x -> getValue x 
-      | Lambda (ty, x, t) -> t
+      | Var x -> begin
+                    match getValue x  with 
+                        | None -> failwith ("Variable inconnue " ^ x)
+                        | Some t' -> t'
+                 end
+      | Lambda (ty, x, t') -> t
       | App (Lambda(ty, x, t), t2) -> (substitute ty x (eval1 t2) t)
       | App (t1, t2) -> App ((eval1 t1), t2)
 ;; 
@@ -32,8 +36,9 @@ let rec eval1 t =
 
 
 let rec examine t = 
+    let type_t = TypeChecker.typeof t in
     match eval1 t with
-        | t -> t
+        | t' when t' = t -> t
         | _ -> examine (eval1 t)
 ;;
 

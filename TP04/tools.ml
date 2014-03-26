@@ -29,8 +29,8 @@ let rec substitute ty t1 t2 t =
 
 (* Donne la valeur d'une variable *)
 let getValue alias = 
-    try Hashtbl.find tblOfSymbols alias
-    with Not_found -> Var alias
+    try Some( Hashtbl.find tblOfSymbols alias)
+    with Not_found -> None
 ;;
 
 

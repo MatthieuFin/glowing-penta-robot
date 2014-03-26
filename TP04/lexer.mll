@@ -10,11 +10,9 @@
 }
 rule lexer = parse                       (* nom de la fonction construite par ocamllex pour *)
                                          (* détecter des lexèmes dans un flux de caractères *)
-
-  | [' ' '\t']          {lexer lexbuf}   (* lexème éludé ; la fonction est rappelée récursivement *)
-  | '\r'?'\n'           {Leol}
-  | "(*" [^'\n']* "*)"  {lexer lexbuf}               
-  | '#' [^'\n']* '\n' ? {lexer lexbuf}
+  | '#' [^'\n']* '\n'        {lexer lexbuf}
+  | [' ' '\t' '\n' '\r']          {lexer lexbuf}   (* lexème éludé ; la fonction est rappelée récursivement *)
+  | ";;"                {Leol}
   | '('                 {Lleftp}
   | ')'                 {Lrightp}
   | '.'                 {Ldot}
@@ -22,18 +20,18 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | '='                 {Lequal}
   | "lambda"            {Llambda}
   | ':'                 {Lsemcol}
-  | ['a'-'z' 'A'-'Z']+  {Lident (Lexing.lexeme lexbuf)}
   | eof                 {raise Eof}
-  | "True"              {Ltrue}
-  | "False"             {Lfalse}
+  | "true"              {Ltrue}
+  | "false"             {Lfalse}
   | "if"                {Lif}
   | "then"              {Lthen}
   | "else"              {Lelse}
-  | "Zero"              {Lzero}
+  | '0'                 {Lzero}
   | "succ"              {Lsucc}
   | "pred"              {Lpred}
   | "isZero"            {LisZero}
   | "Bool"              {Lbool}
   | "Nat"               {Lnat}
-  | _ as c              {(Printf.printf "Erreur : %c" c);Leol}
+  | ['a'-'z' 'A'-'Z']+  {Lident (Lexing.lexeme lexbuf)}
+  | _ as c              {(Printf.printf "Erreur : %c\n" c);Leol}
 
