@@ -1,0 +1,48 @@
+0 ;;
+true ;; 
+false ;;
+#un terme mal typé
+if true then lambda b : Bool. b else false ;;
+
+(lambda x : Bool -> Bool. x) lambda y : Bool. y ;;
+
+let tru = lambda t : Bool. lambda f : Bool. t ;;
+
+let fls = lambda t : Bool. lambda f : Bool. f ;;
+
+let realBool = lambda b : Bool -> Bool -> Bool.
+	b true false ;;
+
+realBool tru ;;
+
+realBool fls ;;
+
+let cond = lambda b : Bool -> Bool -> Bool.
+	   lambda t : Bool. 
+	       lambda f : Bool. b t f ;;
+
+cond tru true false ;;
+
+let churchBool = lambda b : Bool. if b then tru else fls ;;
+
+churchBool true ;;
+
+churchBool false ;;
+
+let realnat = lambda m : (Nat -> Nat) -> Nat -> Nat.
+	m (lambda x : Nat. succ x) 0 ;;
+
+let c2 = lambda s : (Nat -> Nat). lambda z : Nat. s (s z) ;;
+
+realnat c2 ;;
+
+let c5 = lambda s : (Nat -> Nat). lambda z : Nat. s (s (s (s (s z)))) ;;
+
+realnat c5 ;;
+
+# encore un terme mal typé
+(lambda x : Bool. x) succ 0 ;;
+
+# et un autre
+realnat 0 ;;
+
