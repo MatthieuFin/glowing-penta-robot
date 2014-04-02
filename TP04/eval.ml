@@ -4,6 +4,7 @@
         | Benjamin ZIGH
 *)
 open Types;;
+open TypeChecker;;
 open Tools;;
 
 
@@ -36,10 +37,11 @@ let rec eval1 t =
 
 
 let rec examine t = 
-    let type_t = TypeChecker.typeof t in
     match eval1 t with
         | t' when t' = t -> t
         | _ -> examine (eval1 t)
 ;;
 
-let eval param = examine param;;
+let eval param = 
+let type_p = typeof param in
+examine param;;
