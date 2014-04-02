@@ -30,7 +30,7 @@
 %token LisZero
 %token Lbool
 %token Lnat
-
+%token Larrow
 
 
 
@@ -46,13 +46,7 @@ line :
 term :
     | functerm                 {$1} 
     | appterm functerm         {App ($1, $2)}
-    | Ltrue               {True}
-    | Lfalse              {False}
-    | Lzero               {Zero}
     | Lif term Lthen term Lelse term {Cond ($2, $4, $6)}
-    | Lsucc term         {Succ $2}
-    | Lpred term         {Pred $2}
-    | LisZero term       {IsZero $2}
 
 appterm :
     | elemterm                 {$1}
@@ -60,15 +54,27 @@ appterm :
    
 functerm :
     | Llambda Lident Lsemcol typage Ldot term  {Lambda ($4,$2,$6)}
+    | Lsucc term         {Succ $2}
+    | Lpred term         {Pred $2}
+    | LisZero term       {IsZero $2}
     | elemterm                 {$1} 
 
 elemterm :
     | Lident                   {Var ($1)}
-    | Lleftp term Lrightp             {$2}
+    | Ltrue                    {True}
+    | Lfalse                   {False}
+    | Lzero                    {Zero}
+    | Lleftp term Lrightp      {$2}
     
-typage :
+elemtype :
     | Lbool {Bool}
     | Lnat  {Nat}
+    | Lleftp typage Lrightp {$2}
+    
+    
+typage:
+    | elemtype {$1}
+    | elemtype Larrow typage {AppType($1,$3)}
     
 /* Ajout des déclarations */
 
