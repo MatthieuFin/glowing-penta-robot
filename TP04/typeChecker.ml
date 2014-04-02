@@ -1,13 +1,7 @@
 open Types;;
 open Tools;;
 
-exception Bad_Type;;
-
-let decapsuleur t =
-    match t with 
-        | Some_type t1 -> t1
-        | No_type m -> raise Bad_Type
-;;
+exception Bad_Type of string;;
 
 let rec getType var gamma = 
     let rec aux v g =
@@ -15,7 +9,7 @@ let rec getType var gamma =
           | [] -> begin
              match getValue v with
                 | Some t -> typeof t g
-                | None -> No_type ("Variable non typée")
+                | None -> raise (Bad_Type "Variable non typée")
             end
           | (varName, typ)::g' when varName = v -> typ
           | _::g' -> aux v g'
@@ -23,28 +17,28 @@ let rec getType var gamma =
     aux var gamma
 and typeof t gamma = 
     match t with
-      | True -> Some_type (Bool)
-      | False -> Some_type (Bool)
-      | Zero -> Some_type (Nat)
-      | Cond (c, t, f) when typeof c gamma = Some_type (Bool)-> 
+      | True -> Bool
+      | False -> Bool
+      | Zero -> Nat
+      | Cond (c, t, f) when typeof c gamma = Bool-> 
         begin
             let typeT = typeof t gamma
             and typeF = typeof f gamma
-            in if (decapsuleur typeT = decapsuleur typeF) then typeT else No_type ("Condition mal typée")
+            in if (typeT = typeF) then typeT else raise (Bad_Type "Condition mal typée")
         end
-      | Succ (n) when (typeof n gamma) = Some_type (Nat) -> Some_type (Nat)
-      | Pred (n) when (typeof n gamma) = Some_type (Nat) -> Some_type (Nat)
-      | IsZero (n) when (typeof n gamma) = Some_type (Nat) -> Some_type (Bool)
+      | Succ (n) when (typeof n gamma) = Nat -> Nat
+      | Pred (n) when (typeof n gamma) = Nat -> Nat
+      | IsZero (n) when (typeof n gamma) = Nat -> Bool
       | Var (s) -> getType s gamma
       | App (t1, t2) -> begin
             let type_t1 = (typeof t1 gamma)
             and type_t2 = (typeof t2 gamma)
             in match type_t1 with
-                | Some_type (AppType (t11, t12)) when t11 = (decapsuleur type_t2) -> Some_type t12
-                | _ -> No_type ("Application mal typée")
+                | AppType (t11, t12) when t11 = type_t2 -> t12
+                | _ -> raise (Bad_Type "Application mal typée")
             end
-      | Lambda (typ, var, t) -> Some_type(AppType(typ, decapsuleur (typeof t ((var, Some_type typ)::gamma))))
-      | _ -> No_type ("Terme mal typé !")
+      | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)))
+      | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       
       

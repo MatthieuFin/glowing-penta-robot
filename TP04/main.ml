@@ -10,8 +10,8 @@ let rec loop channel =
         let a = Eval.examine (Parser.line Lexer.lexer channel
         ) in
         Output.print_term a
-    with TypeChecker.Bad_Type ->
-        print_endline "Mal typé"
+    with TypeChecker.Bad_Type m ->
+        print_endline m
     end;
     loop channel
 ;;

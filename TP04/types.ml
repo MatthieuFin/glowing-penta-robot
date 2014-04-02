@@ -14,11 +14,6 @@ type glowyType =
     | AppType of glowyType * glowyType
 ;;
 
-type optType =
-    | Some_type of glowyType
-    | No_type of string
-;;
-
 type term = 
     | True
     | False
