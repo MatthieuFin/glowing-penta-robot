@@ -7,7 +7,7 @@
 let rec loop channel =
     begin
     try
-        let a = Eval.examine (Parser.line Lexer.lexer channel
+        let a = Eval.eval (Parser.line Lexer.lexer channel
         ) in
         Output.print_term a
     with TypeChecker.Bad_Type m ->
