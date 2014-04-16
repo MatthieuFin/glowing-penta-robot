@@ -43,5 +43,5 @@ let rec examine t =
 ;;
 
 let eval param = 
-let type_p = typeof param in
+let type_p = typeof param [] in
 examine param;;
