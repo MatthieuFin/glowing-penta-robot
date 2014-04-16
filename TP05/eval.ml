@@ -18,6 +18,7 @@ let rec is_n_val t =
 
 let is_val t =
  match t with
+   | Unit -> true
    | True -> true
    | False -> true
    | Lambda _ -> true
