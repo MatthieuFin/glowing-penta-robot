@@ -33,6 +33,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | "isZero"            {LisZero}
   | "Bool"              {Lbool}
   | "Nat"               {Lnat}
+  | "()"                {Lunit}
   | ['a'-'z'] ['a' - 'z' 'A'-'Z' '0'-'9']*  {Lident (Lexing.lexeme lexbuf)}
   | _ as c              {(Printf.printf "Erreur : %c\n" c);Leol}
 

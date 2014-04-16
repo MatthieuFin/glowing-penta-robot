@@ -31,6 +31,7 @@
 %token Lbool
 %token Lnat
 %token Larrow
+%token Lunit
 
 
 
@@ -65,6 +66,7 @@ elemterm :
     | Lfalse                   {False}
     | Lzero                    {Zero}
     | Lleftp term Lrightp      {$2}
+    | Lunit                    {Unit}
     
 elemtype :
     | Lbool {Bool}

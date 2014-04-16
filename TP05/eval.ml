@@ -30,6 +30,7 @@ let rec examine t =
     if t' = t then t else examine t'
 and eval1 t =
     match t with
+      | Unit -> t
       | True ->  t
       | False ->  t
       | Zero ->  t

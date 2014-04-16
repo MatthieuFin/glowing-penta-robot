@@ -13,6 +13,7 @@ let getIndent i =
 
 let rec type_to_string typ =
     match typ with
+      | UnitType -> "Unit"
       | Bool -> "Bool"
       | Nat -> "Nat"
       | AppType (t1,t2) -> (type_to_string t1)^" -> "^(type_to_string t2) 
@@ -21,6 +22,7 @@ let rec type_to_string typ =
 (*TODO revoir affichage des termes pour faire un truc joli*)
 let rec term_to_string term =
     match term with
+      | Unit -> "()"
       | True -> "True"
       | False -> "False"
       | Zero -> "0"

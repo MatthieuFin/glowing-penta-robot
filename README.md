@@ -1,7 +1,6 @@
 À faire:
 =======
 
-* Type unit 
 * La séquence (;)
 * Le Nommage (let ... in ...)
 * Les enregistrement

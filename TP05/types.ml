@@ -9,12 +9,14 @@
    on gerera directement dans notre programme? *)
 
 type glowyType =
+    | UnitType
     | Bool
     | Nat
     | AppType of glowyType * glowyType
 ;;
 
 type term = 
+    | Unit
     | True
     | False
     | Zero

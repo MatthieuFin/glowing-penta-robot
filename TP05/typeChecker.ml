@@ -20,6 +20,7 @@ and typeof t gamma =
       | True -> Bool
       | False -> Bool
       | Zero -> Nat
+      | Unit -> UnitType
       | Cond (c, t, f) when typeof c gamma = Bool-> 
         begin
             let typeT = typeof t gamma
