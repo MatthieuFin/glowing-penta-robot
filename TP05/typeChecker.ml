@@ -39,6 +39,7 @@ and typeof t gamma =
                 | _ -> raise (Bad_Type "Application mal typée")
             end
       | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)))
+      | Name (alias, t1, t2) -> typeof t2 ((alias , typeof t1 gamma)::gamma)
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       

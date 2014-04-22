@@ -34,6 +34,7 @@
 %token Lunit
 %token Lseq
 %token LunitType
+%token Lin
 
 
 
@@ -44,16 +45,17 @@
 
 line :
     | terme Leol            {$1}
-    | declare Leol         {$1}
+    | declare Leol          {$1}
 
 terme :
     | term                 {$1}
-    | term Lseq term {App (Lambda (UnitType, get_var_name $3, $3), $1)}
+    | terme Lseq term      {App (Lambda (UnitType, get_var_name $3, $3), $1)}
+    | Llet Lident Lequal terme Lin terme {Name ($2, $4, $6)}
     
 term :
-    | functerm                 {$1} 
-    | appterm functerm         {App ($1, $2)}
-    | Lif term Lthen term Lelse term {Cond ($2, $4, $6)}
+    | functerm                             {$1} 
+    | appterm functerm                     {App ($1, $2)}
+    | Lif term Lthen term Lelse term       {Cond ($2, $4, $6)}
 
 appterm :
     | elemterm                 {$1}
@@ -61,10 +63,10 @@ appterm :
    
 functerm :
     | Llambda Lident Lsemcol typage Ldot term  {Lambda ($4,$2,$6)}
-    | Lsucc term         {Succ $2}
-    | Lpred term         {Pred $2}
-    | LisZero term       {IsZero $2}
-    | elemterm                 {$1} 
+    | Lsucc term                               {Succ $2}
+    | Lpred term                               {Pred $2}
+    | LisZero term                             {IsZero $2}
+    | elemterm                                 {$1} 
 
 elemterm :
     | Lident                   {Var ($1)}
@@ -75,15 +77,15 @@ elemterm :
     | Lunit                    {Unit}
     
 elemtype :
-    | Lbool {Bool}
-    | Lnat  {Nat}
-    | LunitType {UnitType}
-    | Lleftp typage Lrightp {$2}
+    | Lbool                    {Bool}
+    | Lnat                     {Nat}
+    | LunitType                {UnitType}
+    | Lleftp typage Lrightp    {$2}
     
     
 typage:
-    | elemtype {$1}
-    | elemtype Larrow typage {AppType($1,$3)}
+    | elemtype                 {$1}
+    | elemtype Larrow typage   {AppType($1,$3)}
     
 /* Ajout des déclarations */
 

@@ -36,6 +36,9 @@ let rec term_to_string term =
       | Var (s) -> s
       | App (t1, t2) -> (term_to_string t1) ^ " " ^ (term_to_string t2)
       | Lambda (typ, var, t) -> "λ" ^ var ^ " : " ^ (type_to_string typ) ^ ". " ^ (term_to_string t)
+      | Name (alias, t1, t2) -> "let " ^ alias 
+                              ^ " = " ^ (term_to_string t1) 
+                              ^ " in " ^ (term_to_string t2)
 ;;
 
 

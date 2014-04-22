@@ -15,15 +15,15 @@ let declare (alias : string) (value : term) =
 
 (* Remplace les occurence de t1 (un nom de variable formelle) 
    dans t (un terme) par t2 (un terme) *)
-let rec substitute ty t1 t2 t = 
+let rec substitute t1 t2 t = 
     match t with
       | Var x when x = t1 -> t2
-      | App (t3, t4) -> App ((substitute ty t1 t2 t3), (substitute ty t1 t2 t4))
-      | Lambda (ty, x, t3) when x <> t1 -> Lambda (ty, x, (substitute ty t1 t2 t3))
-      | Pred x -> Pred (substitute ty t1 t2 x)
-      | IsZero x -> IsZero (substitute ty t1 t2 x)
-      | Succ x -> Succ (substitute ty t1 t2 x)
-      | Cond (bo, tr, fa) -> Cond ((substitute ty t1 t2 bo), (substitute ty t1 t2 tr), (substitute ty t1 t2 fa))
+      | App (t3, t4) -> App ((substitute  t1 t2 t3), (substitute  t1 t2 t4))
+      | Lambda (ty, x, t3) when x <> t1 -> Lambda (ty, x, (substitute  t1 t2 t3))
+      | Pred x -> Pred (substitute  t1 t2 x)
+      | IsZero x -> IsZero (substitute  t1 t2 x)
+      | Succ x -> Succ (substitute  t1 t2 x)
+      | Cond (bo, tr, fa) -> Cond ((substitute  t1 t2 bo), (substitute  t1 t2 tr), (substitute t1 t2 fa))
       | _-> t
 ;;
 
@@ -33,7 +33,24 @@ let getValue alias =
     with Not_found -> None
 ;;
 
-let get_var_name term = "test";;
+let get_var_name term =
+    let rec aux term =
+        match term with
+          | Var x -> x
+          | App (t3, t4) -> "\'" ^ (aux t3) ^ (aux t4)
+          | Lambda (typ, x, t) -> "\'" ^ x ^ (aux t)
+          | Cond (bo, tr, fa) -> "\'" ^ (aux bo) ^ (aux tr) ^ (aux fa)
+          | Pred x -> "\'" ^ (aux x)
+          | Succ x -> "\'" ^ (aux x)
+          | IsZero x -> "\'" ^ (aux x)
+          | Unit -> "\'u"
+          | True -> "\'t"
+          | False -> "\'f"
+          | Zero -> "\'0"
+          | Name (alias, t1, t2) -> "\'" ^ alias ^ (aux t1) ^ (aux t2)
+    in
+    "\'" ^ (aux term)
+;;
 
 let rec elaborate terme =
     match terme with

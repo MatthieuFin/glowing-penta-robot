@@ -27,4 +27,5 @@ type term =
     | Var of string
     | App of term * term
     | Lambda of glowyType * string * term
+    | Name of string * term * term
 ;;

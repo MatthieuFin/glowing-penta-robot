@@ -52,9 +52,11 @@ and eval1 t =
                     | Some t' -> t'
             end
       | Lambda (ty, x, t') ->  t
-      | App (Lambda(ty, x, t'), v2) when (is_val v2) -> (substitute ty x v2 t')
+      | App (Lambda(ty, x, t'), v2) when (is_val v2) -> (substitute x v2 t')
       | App (t1, t2) when (is_val t1) -> App(t1, (eval1 t2))
       | App (t1, t2) -> App ((eval1 t1), t2)
+      | Name (alias, t1, t2) when (is_val t1) -> substitute alias t1 t2
+      | Name (alias, t1, t2) -> Name (alias, eval1 t1, t2)
 ;; 
 
 let eval param = 
