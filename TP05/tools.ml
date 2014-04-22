@@ -33,6 +33,15 @@ let getValue alias =
     with Not_found -> None
 ;;
 
+let get_var_name term = "test";;
+
+let rec elaborate terme =
+    match terme with
+      | Lambda (typ, var, term) -> Lambda (typ, var, elaborate term)
+      | App (t1, t2) -> App (elaborate t1, elaborate t2)
+      | _ -> terme
+;;
+
 
 
 

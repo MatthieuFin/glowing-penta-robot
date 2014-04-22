@@ -13,6 +13,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | '#' [^'\n']* '\n'        {lexer lexbuf}
   | [' ' '\t' '\n' '\r']          {lexer lexbuf}   (* lexème éludé ; la fonction est rappelée récursivement *)
   | ";;"                {Leol}
+  | ';'                 {Lseq}
   | '('                 {Lleftp}
   | ')'                 {Lrightp}
   | "->"                {Larrow}
@@ -33,6 +34,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | "isZero"            {LisZero}
   | "Bool"              {Lbool}
   | "Nat"               {Lnat}
+  | "Unit"              {LunitType}
   | "()"                {Lunit}
   | ['a'-'z'] ['a' - 'z' 'A'-'Z' '0'-'9']*  {Lident (Lexing.lexeme lexbuf)}
   | _ as c              {(Printf.printf "Erreur : %c\n" c);Leol}

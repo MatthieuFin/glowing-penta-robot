@@ -32,6 +32,8 @@
 %token Lnat
 %token Larrow
 %token Lunit
+%token Lseq
+%token LunitType
 
 
 
@@ -41,9 +43,13 @@
 %%
 
 line :
-    | term Leol            {$1}
+    | terme Leol            {$1}
     | declare Leol         {$1}
 
+terme :
+    | term                 {$1}
+    | term Lseq term {App (Lambda (UnitType, get_var_name $3, $3), $1)}
+    
 term :
     | functerm                 {$1} 
     | appterm functerm         {App ($1, $2)}
@@ -71,6 +77,7 @@ elemterm :
 elemtype :
     | Lbool {Bool}
     | Lnat  {Nat}
+    | LunitType {UnitType}
     | Lleftp typage Lrightp {$2}
     
     
