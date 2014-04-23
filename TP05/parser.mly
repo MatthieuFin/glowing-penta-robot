@@ -47,14 +47,17 @@
 %%
 
 line :
+    | term Leol            {$1}
     | terme Leol            {$1}
     | declare Leol          {$1}
 
 terme :
-    | term                 {$1}
-    | terme Lseq term      {App (Lambda (UnitType, get_var_name $3, $3), $1)}
-    | Llet Lident Lequal term Lin term {Name ($2, $4, $6)}
+    | seqterm Lseq term      {App (Lambda (UnitType, get_var_name $3, $3), $1)}
+    | Llet Lident Lequal terme Lin term {Name ($2, $4, $6)}
     
+seqterm:
+    | term            {$1}
+    | terme            {$1}
 term :
     | functerm                             {$1} 
     | appterm functerm                     {App ($1, $2)}
