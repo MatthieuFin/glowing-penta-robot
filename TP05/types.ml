@@ -4,15 +4,12 @@
         | Benjamin ZIGH
 *)
 
-(* TODO faire un truc intelligent *)
-(* est ce qu'on sépare les types au niveau du caml ou
-   on gerera directement dans notre programme? *)
-
 type glowyType =
     | UnitType
     | Bool
     | Nat
     | AppType of glowyType * glowyType
+    | RcdType of (string * glowyType) list
 ;;
 
 type term = 
@@ -28,4 +25,6 @@ type term =
     | App of term * term
     | Lambda of glowyType * string * term
     | Name of string * term * term
+    | Record of (string * term) list
+    | Projection of (term * string)
 ;;

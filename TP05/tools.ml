@@ -5,6 +5,8 @@
 *)
 open Types ;;
 
+exception Field_Not_Found of string;;
+
 let tblOfSymbols = Hashtbl.create 1;;
 
 (* Affecte la valeur value a l'alias alias *)
@@ -48,8 +50,17 @@ let get_var_name term =
           | False -> "\'f"
           | Zero -> "\'0"
           | Name (alias, t1, t2) -> "\'" ^ alias ^ (aux t1) ^ (aux t2)
+          | Record _ -> "\'r"
+          | Projection _ -> "\'p"
     in
     "\'" ^ (aux term)
+;;
+
+let rec find_field liste label =
+    match liste with
+      | [] -> raise (Field_Not_Found label)
+      | (tag, value)::l' when tag = label -> value
+      | _::l' -> find_field l' label
 ;;
 
 let rec elaborate terme =

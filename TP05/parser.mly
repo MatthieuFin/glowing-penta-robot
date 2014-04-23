@@ -13,6 +13,8 @@
 %token Llambda
 %token Lleftp
 %token Lrightp
+%token Lleftb
+%token Lrightb
 %token Ldot
 %token Lequal
 %token Llet
@@ -35,6 +37,7 @@
 %token Lseq
 %token LunitType
 %token Lin
+%token Lsep
 
 
 
@@ -50,7 +53,7 @@ line :
 terme :
     | term                 {$1}
     | terme Lseq term      {App (Lambda (UnitType, get_var_name $3, $3), $1)}
-    | Llet Lident Lequal terme Lin terme {Name ($2, $4, $6)}
+    | Llet Lident Lequal terme Lin term {Name ($2, $4, $6)}
     
 term :
     | functerm                             {$1} 
@@ -75,6 +78,8 @@ elemterm :
     | Lzero                    {Zero}
     | Lleftp term Lrightp      {$2}
     | Lunit                    {Unit}
+    | Lleftb record Lrightb    {Record $2}
+    | terme Ldot Lident       {Projection ($1, $3)}
     
 elemtype :
     | Lbool                    {Bool}
@@ -83,6 +88,10 @@ elemtype :
     | Lleftp typage Lrightp    {$2}
     
     
+record :
+    | Lident Lequal terme                 {[($1, $3)]}
+    | Lident Lequal terme Lsep record     {($1, $3)::$5}
+    
 typage:
     | elemtype                 {$1}
     | elemtype Larrow typage   {AppType($1,$3)}
@@ -90,7 +99,7 @@ typage:
 /* Ajout des déclarations */
 
 declare :
-    | Llet Lident Lequal term    {(Tools.declare $2 $4)}
+    | Llet Lident Lequal terme    {(Tools.declare $2 $4)}
 
 
 %%

@@ -15,6 +15,10 @@ let rec getType var gamma =
           | _::g' -> aux v g'
         in
     aux var gamma
+and getRcdFieldType l gamma =
+    match l with
+      | [] -> []
+      | (label, value):: l' -> (label, (typeof value gamma))::(getRcdFieldType l' gamma)
 and typeof t gamma = 
     match t with
       | True -> Bool
@@ -40,6 +44,10 @@ and typeof t gamma =
             end
       | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)))
       | Name (alias, t1, t2) -> typeof t2 ((alias , typeof t1 gamma)::gamma)
+      | Record l -> RcdType (getRcdFieldType l gamma)
+      | Projection (Record l, label) -> 
+            try typeof (find_field l label) gamma
+            with Field_Not_Found m -> raise (Bad_Type "terme mal typé !")
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       

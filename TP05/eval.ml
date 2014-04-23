@@ -25,11 +25,9 @@ let is_val t =
    | t' -> is_n_val t'
 ;;
 
-(* TODO Tester eval1 *)
-let rec examine t = 
-    let t' = eval1 t in
-    if t' = t then t else examine t'
-and eval1 t =
+
+
+let rec eval1 t =
     match t with
       | Unit -> t
       | True ->  t
@@ -57,7 +55,17 @@ and eval1 t =
       | App (t1, t2) -> App ((eval1 t1), t2)
       | Name (alias, t1, t2) when (is_val t1) -> substitute alias t1 t2
       | Name (alias, t1, t2) -> Name (alias, eval1 t1, t2)
-;; 
+      | Record l -> Record (eval_record l)
+      | Projection (Record l, label) -> find_field l label
+      | Projection (_, _) -> t
+and eval_record l = 
+    match l with
+        | [] -> []
+        | (label, value)::l' -> (label, (examine value))::(eval_record l')
+and examine t = 
+    let t' = eval1 t in
+    if t' = t then t else examine t'
+;;
 
 let eval param = 
 let type_p = typeof param [] in
