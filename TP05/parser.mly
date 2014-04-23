@@ -53,11 +53,12 @@ line :
 
 terme :
     | seqterm Lseq term      {App (Lambda (UnitType, get_var_name $3, $3), $1)}
-    | Llet Lident Lequal terme Lin term {Name ($2, $4, $6)}
+    | Llet Lident Lequal seqterm Lin term {Name ($2, $4, $6)}
     
 seqterm:
     | term            {$1}
     | terme            {$1}
+
 term :
     | functerm                             {$1} 
     | appterm functerm                     {App ($1, $2)}
@@ -102,7 +103,7 @@ typage:
 /* Ajout des déclarations */
 
 declare :
-    | Llet Lident Lequal terme    {(Tools.declare $2 $4)}
+    | Llet Lident Lequal seqterm    {(Tools.declare $2 $4)}
 
 
 %%
