@@ -24,10 +24,10 @@ tools.cmo:tools.ml
 	$(OCAMLC) -c $^
 
 parser.ml:parser.mly
-	$(OCAMLYACC) $^
+	$(OCAMLYACC) -v $^
 
 parser.mli:parser.mly
-	$(OCAMLYACC) $^
+	$(OCAMLYACC) -v $^
 
 parser.cmi:parser.mli
 	$(OCAMLC) -c $^

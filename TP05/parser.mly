@@ -53,7 +53,7 @@ line :
 terme :
     | term                 {$1}
     | terme Lseq term      {App (Lambda (UnitType, get_var_name $3, $3), $1)}
-    | Llet Lident Lequal terme Lin term {Name ($2, $4, $6)}
+    | Llet Lident Lequal term Lin term {Name ($2, $4, $6)}
     
 term :
     | functerm                             {$1} 
