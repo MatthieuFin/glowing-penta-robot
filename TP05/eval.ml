@@ -55,13 +55,14 @@ let rec eval1 t =
       | App (t1, t2) -> App ((eval1 t1), t2)
       | Name (alias, t1, t2) when (is_val t1) -> substitute alias t1 t2
       | Name (alias, t1, t2) -> Name (alias, eval1 t1, t2)
-      | Record l -> Record (eval_record l)
+      | Record l -> Record (eval_list l)
       | Projection (Record l, label) -> find_field l label
-      | Projection (_, _) -> t
-and eval_record l = 
+      | Projection (t, label) -> Projection (eval1 t, label)
+      | Variant l -> Record (eval_list l)
+and eval_list l = 
     match l with
         | [] -> []
-        | (label, value)::l' -> (label, (examine value))::(eval_record l')
+        | (label, value)::l' -> (label, (examine value))::(eval_list l')
 and examine t = 
     let t' = eval1 t in
     if t' = t then t else examine t'

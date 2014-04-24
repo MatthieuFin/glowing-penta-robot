@@ -10,6 +10,7 @@ type glowyType =
     | Nat
     | AppType of glowyType * glowyType
     | RcdType of (string * glowyType) list
+    | VarType of (string * glowyType) list
 ;;
 
 type term = 
@@ -27,4 +28,5 @@ type term =
     | Name of string * term * term
     | Record of (string * term) list
     | Projection of (term * string)
+    | Variant of (string * term) list
 ;;

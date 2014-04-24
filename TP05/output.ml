@@ -11,27 +11,28 @@ let getIndent i =
     aux i ""
 ;;
 
-let rec record_type_to_string l =
+let rec list_type_to_string l =
     match l with
       | [] -> ""
       | (tag, value)::[] -> tag ^ " : " ^ (type_to_string value) 
       | (tag, value)::l' -> tag ^ " : " ^ (type_to_string value)  
-                          ^ ", " ^ (record_type_to_string l')
+                          ^ ", " ^ (list_type_to_string l')
 and type_to_string typ =
     match typ with
       | UnitType -> "Unit"
       | Bool -> "Bool"
       | Nat -> "Nat"
       | AppType (t1,t2) -> (type_to_string t1)^" -> "^(type_to_string t2)
-      | RcdType l -> "{" ^ (record_type_to_string l) ^ "}"
+      | RcdType l -> "{" ^ (list_type_to_string l) ^ "}"
+      | VarType l -> "<" ^ (list_type_to_string l) ^ ">"
 ;;
 
-let rec record_to_string l = 
+let rec list_to_string l = 
     match l with
       | [] -> ""
       | (tag, value)::[] -> tag ^ " = " ^ (term_to_string value) 
       | (tag, value)::l' -> tag ^ " = " ^ (term_to_string value)  
-                          ^ ", " ^ (record_to_string l')
+                          ^ ", " ^ (list_to_string l')
 and term_to_string term =
     match term with
       | Unit -> "()"
@@ -51,7 +52,8 @@ and term_to_string term =
       | Name (alias, t1, t2) -> "let " ^ alias 
                               ^ " = " ^ (term_to_string t1) 
                               ^ " in " ^ (term_to_string t2)
-      | Record l -> "{" ^ (record_to_string l) ^ "}"
+      | Record l -> "{" ^ (list_to_string l) ^ "}"
+      | Variant l -> "<" ^ (list_to_string l) ^ ">"
       | Projection (t, l) -> (term_to_string t) ^ "." ^ l
 ;;
 

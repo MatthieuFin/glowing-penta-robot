@@ -25,8 +25,7 @@ and typeof t gamma =
       | False -> Bool
       | Zero -> Nat
       | Unit -> UnitType
-      | Cond (c, t, f) when typeof c gamma = Bool-> 
-        begin
+      | Cond (c, t, f) when typeof c gamma = Bool-> begin
             let typeT = typeof t gamma
             and typeF = typeof f gamma
             in if (typeT = typeF) then typeT else raise (Bad_Type "Condition mal typée")
@@ -41,10 +40,11 @@ and typeof t gamma =
             in match type_t1 with
                 | AppType (t11, t12) when t11 = type_t2 -> t12
                 | _ -> raise (Bad_Type "Application mal typée")
-            end
+        end
       | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)))
       | Name (alias, t1, t2) -> typeof t2 ((alias , typeof t1 gamma)::gamma)
       | Record l -> RcdType (getRcdFieldType l gamma)
+      | Variant l -> VarType (getRcdFieldType l gamma)
       | Projection (Record l, label) -> 
             try typeof (find_field l label) gamma
             with Field_Not_Found m -> raise (Bad_Type "terme mal typé !")
