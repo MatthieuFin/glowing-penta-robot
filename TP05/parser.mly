@@ -38,6 +38,10 @@
 %token LunitType
 %token Lin
 %token Lsep
+%token Lleftv
+%token Lrightv
+%token Lcase
+%token Las
 
 
 
@@ -83,9 +87,16 @@ valeurs :
     | Lunit                    {Unit}
     | record                   {$1}
     | projection               {$1}
+    | tag                      {$1}
+    
+tag :
+    | Lleftv Lident Lequal sequence Lrightv Las vartype       {Tag ($2, $4, $7)}
 
 record :
-    | Lleftb recordfields Lrightb    {Record $2}
+    | Lleftb fieldlist Lrightb    {Record $2}
+    
+vartype :
+    | Lleftv typelist Lrightv    {VarType $2}
     
 projection :
     | valeurs Ldot Lident    {Projection ($1, $3)}
@@ -96,10 +107,13 @@ elemtype :
     | LunitType                {UnitType}
     | Lleftp typage Lrightp    {$2}
     
+typelist :
+    | Lident Lsemcol typage                 {[($1, $3)]}
+    | Lident Lsemcol typage Lsep typelist     {($1, $3)::$5}
     
-recordfields :
+fieldlist :
     | Lident Lequal sequence                 {[($1, $3)]}
-    | Lident Lequal sequence Lsep recordfields     {($1, $3)::$5}
+    | Lident Lequal sequence Lsep fieldlist     {($1, $3)::$5}
     
 typage:
     | elemtype                 {$1}

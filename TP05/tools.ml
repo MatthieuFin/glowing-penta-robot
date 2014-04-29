@@ -6,6 +6,7 @@
 open Types ;;
 
 exception Field_Not_Found of string;;
+exception Unbound_Variable of string;;
 
 let tblOfSymbols = Hashtbl.create 1;;
 
@@ -31,8 +32,8 @@ let rec substitute t1 t2 t =
 
 (* Donne la valeur d'une variable *)
 let getValue alias = 
-    try Some( Hashtbl.find tblOfSymbols alias)
-    with Not_found -> None
+    try Hashtbl.find tblOfSymbols alias
+    with Not_found -> raise (Unbound_Variable alias)
 ;;
 
 let get_var_name term =
@@ -51,6 +52,7 @@ let get_var_name term =
           | Zero -> "\'0"
           | Name (alias, t1, t2) -> "\'" ^ alias ^ (aux t1) ^ (aux t2)
           | Record _ -> "\'r"
+          | Tag _ -> "\'t"
           | Projection _ -> "\'p"
     in
     "\'" ^ (aux term)

@@ -53,7 +53,8 @@ and term_to_string term =
                               ^ " = " ^ (term_to_string t1) 
                               ^ " in " ^ (term_to_string t2)
       | Record l -> "{" ^ (list_to_string l) ^ "}"
-      | Variant l -> "<" ^ (list_to_string l) ^ ">"
+      | Tag (label, terme, typ) -> "<" ^ label ^" = " 
+                                    ^ term_to_string terme ^ "> as " ^ (type_to_string typ)
       | Projection (t, l) -> (term_to_string t) ^ "." ^ l
 ;;
 

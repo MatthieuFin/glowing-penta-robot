@@ -43,12 +43,7 @@ let rec eval1 t =
       | IsZero Zero ->  True
       | IsZero (Succ v) ->  False (*ATTENTION: on ne vérifie pas que v est une valeur *)
       | IsZero t1 ->  IsZero (eval1 t1)
-      | Var x -> 
-            begin
-                match getValue x  with 
-                    | None -> failwith ("Variable inconnue " ^ x)
-                    | Some t' -> t'
-            end
+      | Var x -> getValue x   
       | Lambda (ty, x, t') ->  t
       | App (Lambda(ty, x, t'), v2) when (is_val v2) -> (substitute x v2 t')
       | App (t1, t2) when (is_val t1) -> App(t1, (eval1 t2))
@@ -58,7 +53,7 @@ let rec eval1 t =
       | Record l -> Record (eval_list l)
       | Projection (Record l, label) -> find_field (eval_list l) label
       | Projection (t, label) -> Projection (eval1 t, label)
-      | Variant l -> Record (eval_list l)
+      | Tag (label, terme, typ) -> Tag (label, eval1 terme, typ)
 and eval_list l = 
     match l with
         | [] -> []

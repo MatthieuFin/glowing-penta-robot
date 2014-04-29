@@ -2,15 +2,12 @@ open Types;;
 open Tools;;
 
 exception Bad_Type of string;;
+exception Unbound_Alias of string;;
 
 let rec getType var gamma = 
     let rec aux v g =
         match g with
-          | [] -> begin
-             match getValue v with
-                | Some t -> typeof t g
-                | None -> raise (Bad_Type "Variable non typée")
-            end
+          | [] -> typeof (getValue v) g
           | (varName, typ)::g' when varName = v -> typ
           | _::g' -> aux v g'
         in
@@ -19,6 +16,11 @@ and getRcdFieldType l gamma =
     match l with
       | [] -> []
       | (label, value):: l' -> (label, (typeof value gamma))::(getRcdFieldType l' gamma)
+and get_variant_field_type var_list alias =
+    match var_list with
+        | [] -> raise (Unbound_Alias alias)
+        | (label, typ)::l' when label = alias -> typ
+        | _::l' -> get_variant_field_type l' alias 
 and typeof t gamma = 
     match t with
       | True -> Bool
@@ -44,10 +46,12 @@ and typeof t gamma =
       | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)))
       | Name (alias, t1, t2) -> typeof t2 ((alias , typeof t1 gamma)::gamma)
       | Record l -> RcdType (getRcdFieldType l gamma)
-      | Variant l -> VarType (getRcdFieldType l gamma)
-      | Projection (Record l, label) -> 
+      | Tag (label, terme, VarType lt) when (typeof terme gamma) = (get_variant_field_type lt label)  -> VarType lt
+      | Projection (Record l, label) -> begin
             try typeof (find_field l label) gamma
             with Field_Not_Found m -> raise (Bad_Type "terme mal typé !")
+        end
+      | Projection (Var x, l) -> typeof (Projection (getValue x, l)) gamma
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       
