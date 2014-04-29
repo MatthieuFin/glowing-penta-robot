@@ -47,43 +47,48 @@
 %%
 
 line :
-    | term Leol            {$1}
-    | terme Leol            {$1}
-    | declare Leol          {$1}
+    | sequence Leol            {$1}
+    | declare Leol             {$1}
+
+sequence:
+    | superterme                         {$1}
+    | superterme Lseq sequence {App (Lambda (UnitType, get_var_name $3, $3), $1)}
+
+superterme :
+    | terme                  {$1}
+    | Llet Lident Lequal sequence Lin sequence {Name ($2, $4, $6)}
 
 terme :
-    | seqterm Lseq term      {App (Lambda (UnitType, get_var_name $3, $3), $1)}
-    | Llet Lident Lequal seqterm Lin term {Name ($2, $4, $6)}
-    
-seqterm:
-    | term            {$1}
-    | terme            {$1}
-
-term :
     | functerm                             {$1} 
     | appterm functerm                     {App ($1, $2)}
-    | Lif term Lthen term Lelse term       {Cond ($2, $4, $6)}
 
 appterm :
-    | elemterm                 {$1}
-    | appterm elemterm         {App ($1,$2)}
+    | valeurs                 {$1}
+    | appterm valeurs         {App ($1,$2)}
    
 functerm :
-    | Llambda Lident Lsemcol typage Ldot term  {Lambda ($4,$2,$6)}
-    | Lsucc term                               {Succ $2}
-    | Lpred term                               {Pred $2}
-    | LisZero term                             {IsZero $2}
-    | elemterm                                 {$1} 
-
-elemterm :
+    | Lsucc sequence                                                   {Succ $2}
+    | Lpred sequence                                                   {Pred $2}
+    | LisZero sequence                                               {IsZero $2}
+    | Llambda Lident Lsemcol typage Ldot sequence            {Lambda ($4,$2,$6)}
+    | Lif sequence Lthen sequence Lelse sequence             {Cond ($2, $4, $6)}
+    | valeurs                                                               {$1}
+    
+valeurs :
     | Lident                   {Var ($1)}
     | Ltrue                    {True}
     | Lfalse                   {False}
     | Lzero                    {Zero}
-    | Lleftp term Lrightp      {$2}
+    | Lleftp sequence Lrightp      {$2}
     | Lunit                    {Unit}
-    | Lleftb record Lrightb    {Record $2}
-    | terme Ldot Lident       {Projection ($1, $3)}
+    | record                   {$1}
+    | projection               {$1}
+
+record :
+    | Lleftb recordfields Lrightb    {Record $2}
+    
+projection :
+    | valeurs Ldot Lident    {Projection ($1, $3)}
     
 elemtype :
     | Lbool                    {Bool}
@@ -92,9 +97,9 @@ elemtype :
     | Lleftp typage Lrightp    {$2}
     
     
-record :
-    | Lident Lequal terme                 {[($1, $3)]}
-    | Lident Lequal terme Lsep record     {($1, $3)::$5}
+recordfields :
+    | Lident Lequal sequence                 {[($1, $3)]}
+    | Lident Lequal sequence Lsep recordfields     {($1, $3)::$5}
     
 typage:
     | elemtype                 {$1}
@@ -103,7 +108,7 @@ typage:
 /* Ajout des déclarations */
 
 declare :
-    | Llet Lident Lequal seqterm    {(Tools.declare $2 $4)}
+    | Llet Lident Lequal sequence    {(Tools.declare $2 $4)}
 
 
 %%
