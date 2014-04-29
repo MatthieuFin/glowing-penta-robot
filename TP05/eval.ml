@@ -56,7 +56,7 @@ let rec eval1 t =
       | Name (alias, t1, t2) when (is_val t1) -> substitute alias t1 t2
       | Name (alias, t1, t2) -> Name (alias, eval1 t1, t2)
       | Record l -> Record (eval_list l)
-      | Projection (Record l, label) -> find_field l label
+      | Projection (Record l, label) -> find_field (eval_list l) label
       | Projection (t, label) -> Projection (eval1 t, label)
       | Variant l -> Record (eval_list l)
 and eval_list l = 
