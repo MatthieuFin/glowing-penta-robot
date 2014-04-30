@@ -18,13 +18,20 @@ let rec is_n_val t =
 ;;
 
 
-let is_val t =
+let rec is_val t =
  match t with
    | Unit -> true
    | True -> true
    | False -> true
    | Lambda _ -> true
+   | Tag (label, term, _) -> is_val term
+   | Record l -> is_val_record l
+   | Projection (term, label) -> is_val term
    | t' -> is_n_val t'
+and is_val_record l =
+    match l with
+      | [] -> true
+      | (_, term)::l' -> (is_val term) && (is_val_record l')
 ;;
 
 

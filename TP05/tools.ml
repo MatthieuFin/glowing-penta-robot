@@ -20,14 +20,31 @@ let declare (alias : string) (value : term) =
    dans t (un terme) par t2 (un terme) *)
 let rec substitute t1 t2 t = 
     match t with
+      | Unit | True | False | Zero -> t
       | Var x when x = t1 -> t2
+      | Var x -> t
       | App (t3, t4) -> App ((substitute  t1 t2 t3), (substitute  t1 t2 t4))
       | Lambda (ty, x, t3) when x <> t1 -> Lambda (ty, x, (substitute  t1 t2 t3))
+      | Lambda _ -> t
       | Pred x -> Pred (substitute  t1 t2 x)
       | IsZero x -> IsZero (substitute  t1 t2 x)
       | Succ x -> Succ (substitute  t1 t2 x)
       | Cond (bo, tr, fa) -> Cond ((substitute  t1 t2 bo), (substitute  t1 t2 tr), (substitute t1 t2 fa))
-      | _-> t
+      | Name (label, value, terme) when label <> t1-> Name (label, (substitute t1 t2 value), (substitute t1 t2 terme))
+      | Name (label, value, terme) -> Name (label, (substitute t1 t2 value), terme)
+      | Record l -> Record (substitute_in_record t1 t2 l)
+      | Projection (terme, label) -> Projection (substitute t1 t2 terme, label)
+      | Tag (label, value, typ) -> Tag (label, (substitute t1 t2 value), typ)
+      | Case (term, l) -> Case (substitute t1 t2 term, substitute_cases t1 t2 l)
+and substitute_in_record t1 t2 l =
+    match l with
+      | [] -> []
+      | (label, term)::l' -> (label,substitute t1 t2 term)::(substitute_in_record t1 t2 l')
+and substitute_cases t1 t2 l =
+    match l with
+      | [] -> []
+      | (label, alias, value)::l' ->
+            (label, alias, substitute t1 t2 value)::(substitute_cases t1 t2 l')
 ;;
 
 (* Donne la valeur d'une variable *)
