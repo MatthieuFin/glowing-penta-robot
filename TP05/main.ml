@@ -10,8 +10,13 @@ let rec loop channel =
         let a = Eval.eval (Parser.line Lexer.lexer channel
         ) in
         Output.print_term a
-    with TypeChecker.Bad_Type m ->
-        print_endline m
+    with 
+      | TypeChecker.Bad_Type m -> print_endline m
+      | TypeChecker.Bad_Tag_Type (label, expected, found) -> 
+        print_endline (label ^ " expected as " 
+                       ^ (Output.type_to_string expected) 
+                       ^ " but found as "
+                       ^ (Output.type_to_string found))
     end;
     loop channel
 ;;

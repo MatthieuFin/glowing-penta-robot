@@ -33,6 +33,14 @@ let rec list_to_string l =
       | (tag, value)::[] -> tag ^ " = " ^ (term_to_string value) 
       | (tag, value)::l' -> tag ^ " = " ^ (term_to_string value)  
                           ^ ", " ^ (list_to_string l')
+and case_list_to_string l =
+    match l with
+      | [] -> ""
+      | [(label, alias, terme)] -> 
+            ("<" ^ label ^ " = " ^ alias ^"> => " ^ (term_to_string terme))
+      | (label, alias, terme):: l' 
+            -> ("<" ^ label ^ " = " ^ alias ^"> => " ^ (term_to_string terme)
+               ^ " | " ^ (case_list_to_string l'))
 and term_to_string term =
     match term with
       | Unit -> "()"
@@ -56,6 +64,7 @@ and term_to_string term =
       | Tag (label, terme, typ) -> "<" ^ label ^" = " 
                                     ^ term_to_string terme ^ "> as " ^ (type_to_string typ)
       | Projection (t, l) -> (term_to_string t) ^ "." ^ l
+      | Case (t, l) -> "case " ^ (term_to_string t) ^ " of " ^ (case_list_to_string l)
 ;;
 
 

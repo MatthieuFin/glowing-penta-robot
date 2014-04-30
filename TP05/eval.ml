@@ -7,6 +7,8 @@ open Types;;
 open TypeChecker;;
 open Tools;;
 
+exception Case_Not_Found;;
+
 let rec is_n_val t =
     match t with
       | Zero -> true
@@ -54,10 +56,18 @@ let rec eval1 t =
       | Projection (Record l, label) -> find_field (eval_list l) label
       | Projection (t, label) -> Projection (eval1 t, label)
       | Tag (label, terme, typ) -> Tag (label, eval1 terme, typ)
+      | Case (Tag (label, terme, typ), case_list) -> compute_cases case_list label terme
+      | Case (terme, l) -> Case (eval1 terme, l)
 and eval_list l = 
     match l with
         | [] -> []
         | (label, value)::l' -> (label, (examine value))::(eval_list l')
+and compute_cases case_list label terme =
+    match case_list with
+      | [] -> raise Case_Not_Found
+      | (tag_name, alias, t)::l' when tag_name = label 
+        -> substitute alias terme t
+      | _::l' -> compute_cases l' label terme
 and examine t = 
     let t' = eval1 t in
     if t' = t then t else examine t'

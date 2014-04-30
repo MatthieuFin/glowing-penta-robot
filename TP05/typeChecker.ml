@@ -3,6 +3,9 @@ open Tools;;
 
 exception Bad_Type of string;;
 exception Unbound_Alias of string;;
+exception Bad_Tag_Type of string * glowyType * glowyType;;
+exception Var_Tag_Not_Found of string;;
+exception Not_Record_Throw of term * string;;
 
 let rec getType var gamma = 
     let rec aux v g =
@@ -21,6 +24,35 @@ and get_variant_field_type var_list alias =
         | [] -> raise (Unbound_Alias alias)
         | (label, typ)::l' when label = alias -> typ
         | _::l' -> get_variant_field_type l' alias 
+(* Fonction qui détermine le type d'une instruction de la forme
+    case <l1 = t> as <li : T> of 
+         <l1 = x1> => res1
+        |<li = xi> => resi
+    
+    Cette fonction doit s'assurer que tout les termes pouvant être retournés
+    sont du même type en considérant le type associés aux labels.
+    
+    Cette fonction prends en entrée une liste de triplet (label, alias, retour)
+    et une liste de couples (labels, type) et un contexte.
+ *)
+and compute_case_type case_list type_list gamma  =
+    let rec aux case_list type_list gamma typ =
+        match case_list with
+          | [] -> typ
+          | (label,alias,term)::l' 
+                when (typeof term 
+                        ((alias,
+                             get_variant_field_type type_list label)::gamma))
+                     = typ -> aux l' type_list gamma typ
+          | _::l' -> raise (Bad_Type "Cas mal typé")
+    in
+    match case_list with
+      | [] -> raise (Bad_Type "Case vide")
+      | (label, alias, term)::l' 
+            -> (aux l' type_list gamma 
+                    (typeof term 
+                        ((alias,
+                             get_variant_field_type type_list label)::gamma)))
 and typeof t gamma = 
     match t with
       | True -> Bool
@@ -47,11 +79,21 @@ and typeof t gamma =
       | Name (alias, t1, t2) -> typeof t2 ((alias , typeof t1 gamma)::gamma)
       | Record l -> RcdType (getRcdFieldType l gamma)
       | Tag (label, terme, VarType lt) when (typeof terme gamma) = (get_variant_field_type lt label)  -> VarType lt
-      | Projection (Record l, label) -> begin
-            try typeof (find_field l label) gamma
-            with Field_Not_Found m -> raise (Bad_Type "terme mal typé !")
+      | Tag (label, terme, VarType lt) 
+            -> raise (Bad_Tag_Type (label,
+                      (get_variant_field_type lt label), (typeof terme gamma)))
+      | Projection (terme, label) -> begin
+            let t_type = typeof terme gamma in
+            match t_type with
+              | RcdType l -> (get_variant_field_type l label)
+              | _ -> raise (Not_Record_Throw (terme, label))
         end
-      | Projection (Var x, l) -> typeof (Projection (getValue x, l)) gamma
+      | Case (t, case_list) -> begin
+            let t_type = typeof t gamma in
+            match t_type with
+              | VarType type_list -> compute_case_type case_list type_list gamma
+              | _ -> failwith "YOLO !"
+        end
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       

@@ -54,6 +54,7 @@ let get_var_name term =
           | Record _ -> "\'r"
           | Tag _ -> "\'t"
           | Projection _ -> "\'p"
+          | Case _ -> "\'c"
     in
     "\'" ^ (aux term)
 ;;

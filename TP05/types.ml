@@ -29,4 +29,5 @@ type term =
     | Record of (string * term) list
     | Projection of (term * string)
     | Tag of string * term * glowyType
+    | Case of term * ((string * string * term) list)
 ;;
