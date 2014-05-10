@@ -65,6 +65,9 @@ let rec eval1 t =
       | Tag (label, terme, typ) -> Tag (label, eval1 terme, typ)
       | Case (Tag (label, terme, typ), case_list) -> compute_cases case_list label terme
       | Case (terme, l) -> Case (eval1 terme, l)
+      | Fix terme when not (is_val terme) -> Fix (eval1 terme)
+      | Fix (Lambda(ty, label, terme)) -> substitute label (Fix (Lambda(ty, label, terme))) terme
+      | Fix t -> Fix t
 and eval_list l = 
     match l with
         | [] -> []

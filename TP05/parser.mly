@@ -45,6 +45,7 @@
 %token Lof
 %token Lpipe
 %token Lbarrow
+%token Lletrec
 
 
 
@@ -64,6 +65,7 @@ sequence:
 
 superterme :
     | terme                                                                 {$1}
+    | Lletrec Lident Lequal sequence Lin sequence      {Name($2, Fix $4, $6)}
     | Llet Lident Lequal sequence Lin sequence               {Name ($2, $4, $6)}
 
 terme :
@@ -102,7 +104,7 @@ record :
     | Lleftb fieldlist Lrightb                                       {Record $2}
     
 vartype :
-    | Lleftv typelist Lrightv                                       {VarType $2}
+    | Lleftv vartypelist Lrightv                                       {VarType $2}
     
 projection :
     | valeurs Ldot Lident                                  {Projection ($1, $3)}
@@ -111,11 +113,20 @@ elemtype :
     | Lbool                                                               {Bool}
     | Lnat                                                                 {Nat}
     | LunitType                                                       {UnitType}
+    | vartype                                                               {$1}
+    | rectype                                                               {$1}
     | Lleftp typage Lrightp                                                 {$2}
     
-typelist :
+rectype :
+    | Lleftb rectypelist Lrightb                                   {RcdType($2)}
+   
+rectypelist :
     | Lident Lsemcol typage                                         {[($1, $3)]}
-    | Lident Lsemcol typage Lpipe typelist                        {($1, $3)::$5}
+    | Lident Lsemcol typage Lsep rectypelist                      {($1, $3)::$5}
+
+vartypelist :
+    | Lident Lsemcol typage                                         {[($1, $3)]}
+    | Lident Lsemcol typage Lpipe vartypelist                     {($1, $3)::$5}
     
 fieldlist :
     | Lident Lequal sequence                                        {[($1, $3)]}

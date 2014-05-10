@@ -30,4 +30,5 @@ type term =
     | Projection of (term * string)
     | Tag of string * term * glowyType
     | Case of term * ((string * string * term) list)
+    | Fix of term
 ;;

@@ -25,6 +25,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | "=>"                {Lbarrow}
   | '.'                 {Ldot}
   | '|'                 {Lpipe}
+  | "letrec"            {Lletrec}
   | "let"               {Llet}
   | '='                 {Lequal}
   | "lambda"            {Llambda}

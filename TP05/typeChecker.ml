@@ -94,6 +94,12 @@ and typeof t gamma =
               | VarType type_list -> compute_case_type case_list type_list gamma
               | _ -> failwith "YOLO !"
         end
+      | Fix terme -> begin
+            let terme_type = typeof terme gamma in
+            match terme_type with
+              | AppType (t1, t2) when t1 = t2-> t2
+              | _ -> raise (Bad_Type "Fixe mal typé")
+        end
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       

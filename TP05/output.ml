@@ -65,6 +65,7 @@ and term_to_string term =
                                     ^ term_to_string terme ^ "> as " ^ (type_to_string typ)
       | Projection (t, l) -> (term_to_string t) ^ "." ^ l
       | Case (t, l) -> "case " ^ (term_to_string t) ^ " of " ^ (case_list_to_string l)
+      | Fix t -> term_to_string t
 ;;
 
 

@@ -36,6 +36,7 @@ let rec substitute t1 t2 t =
       | Projection (terme, label) -> Projection (substitute t1 t2 terme, label)
       | Tag (label, value, typ) -> Tag (label, (substitute t1 t2 value), typ)
       | Case (term, l) -> Case (substitute t1 t2 term, substitute_cases t1 t2 l)
+      | Fix terme -> Fix (substitute t1 t2 terme)
 and substitute_in_record t1 t2 l =
     match l with
       | [] -> []
