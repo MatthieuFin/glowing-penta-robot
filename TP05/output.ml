@@ -70,5 +70,5 @@ and term_to_string term =
 
 
 let print_term term =
-    print_endline ((term_to_string term) ^ " : " ^ (type_to_string (typeof term [] )))
+    print_endline ((term_to_string term) ^ " : " ^ (type_to_string (typeof term [] [])))
 ;;

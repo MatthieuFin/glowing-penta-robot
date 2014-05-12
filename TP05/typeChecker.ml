@@ -7,6 +7,7 @@ exception Bad_Tag_Type of string * glowyType * glowyType;;
 exception Var_Tag_Not_Found of string;;
 exception Not_Record_Throw of term * string;;
 
+(*TODO ajouter getLocType *)
 let rec getType var gamma sigma = 
     let rec aux v g s=
         match g with
@@ -19,6 +20,7 @@ and getRcdFieldType l gamma sigma=
     match l with
       | [] -> []
       | (label, value):: l' -> (label, (typeof value gamma sigma))::(getRcdFieldType l' gamma sigma)
+and getLocType l gamma sigma = UnitType
 and get_variant_field_type var_list alias =
     match var_list with
         | [] -> raise (Unbound_Alias alias)
@@ -114,7 +116,7 @@ and typeof t gamma sigma =
             | (RefType t11, t12) when (t11 = t12) -> UnitType
             | _ -> raise (Bad_Type "Affect mal typé")
         end
-      | Loc l -> let l_type = sigma l in RefType l_type
+      | Loc l -> let l_type = (getLocType l gamma sigma) in RefType l_type
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       
