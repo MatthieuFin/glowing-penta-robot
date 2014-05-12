@@ -11,6 +11,7 @@ type glowyType =
     | AppType of glowyType * glowyType
     | RcdType of (string * glowyType) list
     | VarType of (string * glowyType) list
+    | RefType of glowyType
 ;;
 
 type term = 
@@ -31,4 +32,8 @@ type term =
     | Tag of string * term * glowyType
     | Case of term * ((string * string * term) list)
     | Fix of term
+    | Ref of term
+    | Deref of term
+    | Affect of term * term
+    | Loc of string
 ;;
