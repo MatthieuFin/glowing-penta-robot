@@ -34,6 +34,7 @@
 %token Lnat
 %token Larrow
 %token Lunit
+%token Laffect /* %right? prio? */
 %token Lseq
 %token LunitType
 %token Lin
@@ -46,7 +47,8 @@
 %token Lpipe
 %token Lbarrow
 %token Lletrec
-
+%token Lref
+%token Lderef
 
 
 %start line                       /* axiome */
@@ -67,6 +69,8 @@ superterme :
     | terme                                                                 {$1}
     | Lletrec Lident Lequal sequence Lin sequence      {Name($2, Fix $4, $6)}
     | Llet Lident Lequal sequence Lin sequence               {Name ($2, $4, $6)}
+    | terme Laffect terme                               {Affect($1,$3)}
+    
 
 terme :
     | functerm                                                              {$1} 
@@ -77,6 +81,8 @@ appterm :
     | appterm valeurs                                              {App ($1,$2)}
    
 functerm :
+    | Lref sequence                                                     {Ref $2}
+    | Lderef sequence                                                 {Deref $2}
     | Lsucc sequence                                                   {Succ $2}
     | Lpred sequence                                                   {Pred $2}
     | LisZero sequence                                               {IsZero $2}
