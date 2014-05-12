@@ -53,53 +53,55 @@ and compute_case_type case_list type_list gamma  =
                     (typeof term 
                         ((alias,
                              get_variant_field_type type_list label)::gamma)))
-and typeof t gamma = 
+and typeof t gamma sigma = 
     match t with
       | True -> Bool
       | False -> Bool
       | Zero -> Nat
       | Unit -> UnitType
-      | Cond (c, t, f) when typeof c gamma = Bool-> begin
-            let typeT = typeof t gamma
-            and typeF = typeof f gamma
+      | Cond (c, t, f) when typeof c gamma sigma = Bool-> begin
+            let typeT = typeof t gamma sigma
+            and typeF = typeof f gamma sigma
             in if (typeT = typeF) then typeT else raise (Bad_Type "Condition mal typée")
         end
-      | Succ (n) when (typeof n gamma) = Nat -> Nat
-      | Pred (n) when (typeof n gamma) = Nat -> Nat
-      | IsZero (n) when (typeof n gamma) = Nat -> Bool
+      | Succ (n) when (typeof n gamma sigma) = Nat -> Nat
+      | Pred (n) when (typeof n gamma sigma) = Nat -> Nat
+      | IsZero (n) when (typeof n gamma sigma) = Nat -> Bool
       | Var (s) -> getType s gamma
       | App (t1, t2) -> begin
-            let type_t1 = (typeof t1 gamma)
-            and type_t2 = (typeof t2 gamma)
+            let type_t1 = (typeof t1 gamma sigma)
+            and type_t2 = (typeof t2 gamma sigma)
             in match type_t1 with
                 | AppType (t11, t12) when t11 = type_t2 -> t12
                 | _ -> raise (Bad_Type "Application mal typée")
         end
-      | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)))
-      | Name (alias, t1, t2) -> typeof t2 ((alias , typeof t1 gamma)::gamma)
+      | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)) sigma)
+      | Name (alias, t1, t2) -> typeof t2 ((alias , typeof t1 gamma)::gamma) sigma
       | Record l -> RcdType (getRcdFieldType l gamma)
-      | Tag (label, terme, VarType lt) when (typeof terme gamma) = (get_variant_field_type lt label)  -> VarType lt
+      | Tag (label, terme, VarType lt) when (typeof terme gamma sigma) = (get_variant_field_type lt label)  -> VarType lt
       | Tag (label, terme, VarType lt) 
             -> raise (Bad_Tag_Type (label,
-                      (get_variant_field_type lt label), (typeof terme gamma)))
+                      (get_variant_field_type lt label), (typeof terme gamma sigma)))
       | Projection (terme, label) -> begin
-            let t_type = typeof terme gamma in
+            let t_type = typeof terme gamma sigma in
             match t_type with
               | RcdType l -> (get_variant_field_type l label)
               | _ -> raise (Not_Record_Throw (terme, label))
         end
       | Case (t, case_list) -> begin
-            let t_type = typeof t gamma in
+            let t_type = typeof t gamma sigma in
             match t_type with
               | VarType type_list -> compute_case_type case_list type_list gamma
               | _ -> failwith "YOLO !"
         end
       | Fix terme -> begin
-            let terme_type = typeof terme gamma in
+            let terme_type = typeof terme gamma sigma in
             match terme_type with
               | AppType (t1, t2) when t1 = t2-> t2
               | _ -> raise (Bad_Type "Fixe mal typé")
         end
+      | Ref terme -> let terme_type = typeof terme gamma sigma in RefType terme_type
+      | Deref terme ->
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       
