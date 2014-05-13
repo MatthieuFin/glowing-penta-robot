@@ -75,13 +75,13 @@ let rec eval1 t gamma =
       | Fix terme when not (is_val terme) -> Fix (eval1 terme gamma)
       | Fix (Lambda(ty, label, terme)) -> substitute label (Fix (Lambda(ty, label, terme))) terme
       | Fix t -> Fix t
-      | Ref t when (is_val t) ->  (setRef (Hashtbl.length mu) t (typeof t gamma))
+      | Ref t when (is_val t) -> print_string "YOLO !";(setRef (Hashtbl.length mu) t (typeof t gamma))
       | Ref t -> Ref (eval1 t gamma)
       | Deref Loc t when isSetRef t -> getRefValue t
       | Deref t -> Deref (eval1 t gamma)
       | Affect((Loc l), t) when (isSetRef l) && (is_val t) -> (setRef l t (typeof t gamma))
       | Affect(t1, t2) -> Affect(eval1 t1 gamma, eval1 t2 gamma)  
-      | Loc t -> Loc t   
+      | Loc t -> print_string (string_of_int t); Loc t   
 and eval_list l gamma= 
     match l with
         | [] -> []

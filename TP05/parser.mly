@@ -151,7 +151,7 @@ cases :
 /* Ajout des déclarations */
 
 declare :
-    | Llet Lident Lequal sequence                        {(Tools.declare $2 $4)}
+    | Llet Lident Lequal sequence         {(Tools.declare $2 (Eval.examine $4 []))}
 
 
 %%

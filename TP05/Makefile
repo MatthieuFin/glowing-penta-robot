@@ -4,7 +4,7 @@ OCAMLDEP=ocamldep
 OCAMLLEX=ocamllex
 OCAMLYACC=ocamlyacc
 
-APPLI_OBJS=types.cmo tools.cmo lexer.cmo parser.cmo typeChecker.cmo eval.cmo output.cmo main.cmo 
+APPLI_OBJS=types.cmo tools.cmo typeChecker.cmo eval.cmo lexer.cmo parser.cmo output.cmo main.cmo 
 BIG_APPLI_OBJS= types.cmo tools.cmo lexer.cmo parser.cmo bigEval.cmo output.cmo bigMain.cmo 
 APPLI_INTERFACES= bigEval.cmi bigMain.cmi eval.cmi lexer.cmi output.cmi typeChecker.cmi parser.cmi types.cmi main.cmi tools.cmi
 OTHERS_FILES=lexer.ml  parser.ml parser.mli
