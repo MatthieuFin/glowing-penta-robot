@@ -50,6 +50,7 @@
 %token Lref
 %token Lderef
 %token LdefaultC
+%token Lstar
 
 %start line                       /* axiome */
 %type <Types.term> line    /* type de l'attribut de l'axiome */  
@@ -57,11 +58,11 @@
 %%
 
 line :
-    | sequence    Leol                                                         {$1}
+    | sequence    Leol                                                      {$1}
     | declare Leol                                                          {$1}
 
 sequence:
-    | superterme                                                         {$1}
+    | superterme                                                            {$1}
     | superterme Lseq sequence 
                               {App (Lambda (UnitType, get_var_name $3, $3), $1)}
 
@@ -123,6 +124,7 @@ elemtype :
     | vartype                                                               {$1}
     | rectype                                                               {$1}
     | Lleftp typage Lrightp                                                 {$2}
+    | elemtype Lstar                                                {RefType $1}
     
 rectype :
     | Lleftb rectypelist Lrightb                                   {RcdType($2)}

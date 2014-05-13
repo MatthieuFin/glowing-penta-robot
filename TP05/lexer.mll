@@ -26,6 +26,7 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | '.'                 {Ldot}
   | '|'                 {Lpipe}
   | '_'                 {LdefaultC}
+  | '*'                 {Lstar}
   | "letrec"            {Lletrec}
   | "let"               {Llet}
   | '='                 {Lequal}
