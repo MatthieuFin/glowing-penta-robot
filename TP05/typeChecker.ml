@@ -2,7 +2,14 @@ open Types;;
 open Tools;;
 
 
-
+let print_gamma gamma =
+    let rec aux gamma =
+        match gamma with
+        | [] -> ""
+        | (l, typ)::l' -> l ^ (aux l' )
+    in
+    print_endline (aux gamma)
+;;
 
 let rec getType var gamma  = 
     let rec aux v g =
@@ -38,6 +45,7 @@ and compute_case_type case_list type_list gamma   =
     let rec aux case_list type_list gamma typ  =
         match case_list with
           | [] -> typ
+          | [(label, alias, term)] when label = "_" && alias = "_" ->typeof term gamma
           | (label,alias,term)::l' 
                 when (typeof term 
                         ((alias,
@@ -94,6 +102,7 @@ and typeof t gamma  =
               | _ -> failwith "YOLO !"
         end
       | Fix terme -> begin
+            print_gamma gamma;
             let terme_type = typeof terme gamma  in
             match terme_type with
               | AppType (t1, t2) when t1 = t2-> t2

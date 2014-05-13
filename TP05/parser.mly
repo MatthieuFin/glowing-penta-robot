@@ -49,7 +49,7 @@
 %token Lletrec
 %token Lref
 %token Lderef
-
+%token LdefaultC
 
 %start line                       /* axiome */
 %type <Types.term> line    /* type de l'attribut de l'axiome */  
@@ -67,7 +67,8 @@ sequence:
 
 superterme :
     | terme                                                                 {$1}
-    | Lletrec Lident Lequal sequence Lin sequence      {Name($2, Fix $4, $6)}
+    | Lletrec Lident Lsemcol typage Lequal sequence Lin sequence      
+                                        {Name($2, Fix (Lambda($4, $2, $6)), $8)}
     | Llet Lident Lequal sequence Lin sequence               {Name ($2, $4, $6)}
     | terme Laffect terme                               {Affect($1,$3)}
     
@@ -88,7 +89,7 @@ functerm :
     | LisZero sequence                                               {IsZero $2}
     | Llambda Lident Lsemcol typage Ldot sequence            {Lambda ($4,$2,$6)}
     | Lif sequence Lthen sequence Lelse sequence             {Cond ($2, $4, $6)}
-    | Lcase sequence Lof cases                                    {Case ($2,$4)}
+    | Lcase sequence Lof Lpipe cases                              {Case ($2,$5)}
     | valeurs                                                               {$1}
     
 valeurs :
@@ -143,6 +144,7 @@ typage:
     | elemtype Larrow typage                                    {AppType($1,$3)}
     
 cases :
+    | LdefaultC Lbarrow sequence                               {[("_", "_", $3)]}
     | Lleftv Lident Lequal Lident Lrightv Lbarrow sequence      
                                                                 {[($2, $4, $7)]}
     | Lleftv Lident Lequal Lident Lrightv Lbarrow sequence Lpipe cases
@@ -151,7 +153,7 @@ cases :
 /* Ajout des déclarations */
 
 declare :
-    | Llet Lident Lequal sequence         {(Tools.declare $2 (Eval.examine $4 []))}
+    | Llet Lident Lequal sequence         {(Tools.declare $2 (Eval.examine $4  []))}
 
 
 %%

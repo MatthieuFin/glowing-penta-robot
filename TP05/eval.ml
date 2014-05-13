@@ -64,7 +64,7 @@ let rec eval1 t gamma =
       | App (Lambda(ty, x, t'), v2) when (is_val v2) -> (substitute x v2 t')
       | App (t1, t2) when (is_val t1) -> App(t1, (eval1 t2 gamma))
       | App (t1, t2) -> App ((eval1 t1 gamma), t2)
-      | Name (alias, t1, t2) when (is_val t1) -> substitute alias t1 t2
+      | Name (alias, t1, t2) when (is_val t1) ->  substitute alias t1 t2
       | Name (alias, t1, t2) -> Name (alias, (eval1 t1 gamma), t2)
       | Record l -> Record (eval_list l gamma)
       | Projection (Record l, label) -> find_field (eval_list l gamma) label
@@ -72,8 +72,9 @@ let rec eval1 t gamma =
       | Tag (label, terme, typ) -> Tag (label, (eval1 terme gamma), typ)
       | Case (Tag (label, terme, typ), case_list) -> compute_cases case_list label terme
       | Case (terme, l) -> Case ((eval1 terme gamma), l)
-      | Fix terme when not (is_val terme) -> Fix (eval1 terme gamma)
-      | Fix (Lambda(ty, label, terme)) -> substitute label (Fix (Lambda(ty, label, terme))) terme
+      | Fix terme when not (is_val terme) ->Fix (eval1 terme gamma)
+      | Fix (Lambda(ty, label, terme)) -> 
+                        substitute label (Fix (Lambda(ty, label, terme))) terme
       | Fix t -> Fix t
       | Ref t when (is_val t) -> (setRef (Hashtbl.length mu) t (typeof t gamma))
       | Ref t -> Ref (eval1 t gamma)
@@ -89,6 +90,7 @@ and eval_list l gamma=
 and compute_cases case_list label terme =
     match case_list with
       | [] -> raise Case_Not_Found
+      | [(tag, alias, seq)] when tag = "_" && alias = "_" -> seq
       | (tag_name, alias, t)::l' when tag_name = label 
         -> substitute alias terme t
       | _::l' -> compute_cases l' label terme
@@ -98,5 +100,5 @@ and examine t gamma =
 ;;
 
 let eval param = 
-let type_p = typeof param [] in
+    let type_p = typeof param [] in
 examine param [];;
