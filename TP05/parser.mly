@@ -71,7 +71,7 @@ superterme :
     | Lletrec Lident Lsemcol typage Lequal superterme Lin superterme      
                                         {Name($2, Fix (Lambda($4, $2, $6)), $8)}
     | Llet Lident Lequal superterme Lin superterme           {Name ($2, $4, $6)}
-    | terme Laffect terme                               {Affect($1,$3)}
+    | valeurs Laffect superterme                               {Affect($1,$3)}
     
 
 terme :
