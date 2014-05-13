@@ -55,6 +55,8 @@
 %start line                       /* axiome */
 %type <Types.term> line    /* type de l'attribut de l'axiome */  
 
+%right Lbarrow
+%left Lpipe
 %%
 
 line :
@@ -90,7 +92,7 @@ functerm :
     | LisZero terme                                               {IsZero $2}
     | Llambda Lident Lsemcol typage Ldot terme            {Lambda ($4,$2,$6)}
     | Lif terme Lthen terme Lelse terme             {Cond ($2, $4, $6)}
-    | Lcase terme Lof Lpipe cases                              {Case ($2,$5)}
+    | Lcase terme Lof  cases                              {Case ($2,$4)}
     | valeurs                                                               {$1}
     
 valeurs :
@@ -146,11 +148,11 @@ typage:
     | elemtype Larrow typage                                    {AppType($1,$3)}
     
 cases :
-    | LdefaultC Lbarrow superterme                            {[("_", "_", $3)]}
-    | Lleftv Lident Lequal Lident Lrightv Lbarrow superterme      
-                                                                {[($2, $4, $7)]}
-    | Lleftv Lident Lequal Lident Lrightv Lbarrow superterme Lpipe cases
-                                                                {($2,$4,$7)::$9}
+    | Lpipe LdefaultC Lbarrow superterme                            {[("_", "_", $4)]}
+    | Lpipe Lleftv Lident Lequal Lident Lrightv Lbarrow superterme      
+                                                                {[($3, $5, $8)]}
+    | Lpipe Lleftv Lident Lequal Lident Lrightv Lbarrow superterme cases
+                                                                {($3,$5,$8)::$9}
     
 /* Ajout des déclarations */
 
