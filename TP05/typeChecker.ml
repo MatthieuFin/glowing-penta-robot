@@ -1,16 +1,6 @@
 open Types;;
 open Tools;;
 
-
-let print_gamma gamma =
-    let rec aux gamma =
-        match gamma with
-        | [] -> ""
-        | (l, typ)::l' -> l ^ (aux l' )
-    in
-    print_endline (aux gamma)
-;;
-
 let rec getType var gamma  = 
     let rec aux v g =
         match g with
@@ -102,7 +92,6 @@ and typeof t gamma  =
               | _ -> failwith "YOLO !"
         end
       | Fix terme -> begin
-            print_gamma gamma;
             let terme_type = typeof terme gamma  in
             match terme_type with
               | AppType (t1, t2) when t1 = t2-> t2

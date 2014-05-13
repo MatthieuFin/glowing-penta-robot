@@ -58,19 +58,19 @@
 %%
 
 line :
-    | sequence    Leol                                                      {$1}
-    | declare Leol                                                          {$1}
+    | sequence Leol                                                        {$1}
+    | declare  Leol                                                        {$1}
 
 sequence:
-    | superterme                                                            {$1}
+    | superterme                                                           {$1}
     | superterme Lseq sequence 
                               {App (Lambda (UnitType, get_var_name $3, $3), $1)}
 
 superterme :
     | terme                                                                 {$1}
-    | Lletrec Lident Lsemcol typage Lequal sequence Lin sequence      
+    | Lletrec Lident Lsemcol typage Lequal superterme Lin superterme      
                                         {Name($2, Fix (Lambda($4, $2, $6)), $8)}
-    | Llet Lident Lequal sequence Lin sequence               {Name ($2, $4, $6)}
+    | Llet Lident Lequal superterme Lin superterme           {Name ($2, $4, $6)}
     | terme Laffect terme                               {Affect($1,$3)}
     
 
@@ -83,14 +83,14 @@ appterm :
     | appterm valeurs                                              {App ($1,$2)}
    
 functerm :
-    | Lref sequence                                                     {Ref $2}
-    | Lderef sequence                                                 {Deref $2}
-    | Lsucc sequence                                                   {Succ $2}
-    | Lpred sequence                                                   {Pred $2}
-    | LisZero sequence                                               {IsZero $2}
-    | Llambda Lident Lsemcol typage Ldot sequence            {Lambda ($4,$2,$6)}
-    | Lif sequence Lthen sequence Lelse sequence             {Cond ($2, $4, $6)}
-    | Lcase sequence Lof Lpipe cases                              {Case ($2,$5)}
+    | Lref terme                                                     {Ref $2}
+    | Lderef terme                                                 {Deref $2}
+    | Lsucc terme                                                   {Succ $2}
+    | Lpred terme                                                   {Pred $2}
+    | LisZero terme                                               {IsZero $2}
+    | Llambda Lident Lsemcol typage Ldot terme            {Lambda ($4,$2,$6)}
+    | Lif terme Lthen terme Lelse terme             {Cond ($2, $4, $6)}
+    | Lcase terme Lof Lpipe cases                              {Case ($2,$5)}
     | valeurs                                                               {$1}
     
 valeurs :
@@ -105,7 +105,7 @@ valeurs :
     | tag                                                                   {$1}
     
 tag :
-    | Lleftv Lident Lequal sequence Lrightv Las vartype       {Tag ($2, $4, $7)}
+    | Lleftv Lident Lequal superterme Lrightv Las vartype       {Tag ($2, $4, $7)}
 
 record :
     | Lleftb Lrightb                                                 {Record []}
@@ -138,24 +138,24 @@ vartypelist :
     | Lident Lsemcol typage Lpipe vartypelist                     {($1, $3)::$5}
     
 fieldlist :
-    | Lident Lequal sequence                                        {[($1, $3)]}
-    | Lident Lequal sequence Lsep fieldlist                       {($1, $3)::$5}
+    | Lident Lequal superterme                                        {[($1, $3)]}
+    | Lident Lequal superterme Lsep fieldlist                       {($1, $3)::$5}
     
 typage:
     | elemtype                                                              {$1}
     | elemtype Larrow typage                                    {AppType($1,$3)}
     
 cases :
-    | LdefaultC Lbarrow sequence                               {[("_", "_", $3)]}
-    | Lleftv Lident Lequal Lident Lrightv Lbarrow sequence      
+    | LdefaultC Lbarrow superterme                            {[("_", "_", $3)]}
+    | Lleftv Lident Lequal Lident Lrightv Lbarrow superterme      
                                                                 {[($2, $4, $7)]}
-    | Lleftv Lident Lequal Lident Lrightv Lbarrow sequence Lpipe cases
+    | Lleftv Lident Lequal Lident Lrightv Lbarrow superterme Lpipe cases
                                                                 {($2,$4,$7)::$9}
     
 /* Ajout des déclarations */
 
 declare :
-    | Llet Lident Lequal sequence         {(Tools.declare $2 (Eval.examine $4  []))}
+    | Llet Lident Lequal superterme   {(Tools.declare $2 (Eval.examine $4  []))}
 
 
 %%
