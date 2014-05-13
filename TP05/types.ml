@@ -35,5 +35,5 @@ type term =
     | Ref of term
     | Deref of term
     | Affect of term * term
-    | Loc of string
+    | Loc of int
 ;;

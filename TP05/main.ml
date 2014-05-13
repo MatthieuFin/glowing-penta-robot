@@ -3,6 +3,7 @@
         | Damien PICARD
         | Benjamin ZIGH
 *)
+open Tools;;
 
 let rec loop channel =
     begin
@@ -11,8 +12,8 @@ let rec loop channel =
         ) in
         Output.print_term a
     with 
-      | TypeChecker.Bad_Type m -> print_endline m
-      | TypeChecker.Bad_Tag_Type (label, expected, found) -> 
+      | Bad_Type m -> print_endline m
+      | Bad_Tag_Type (label, expected, found) -> 
         print_endline (label ^ " expected as " 
                        ^ (Output.type_to_string expected) 
                        ^ " but found as "

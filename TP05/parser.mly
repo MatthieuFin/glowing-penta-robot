@@ -57,11 +57,11 @@
 %%
 
 line :
-    | sequence                                                          {$1}
+    | sequence    Leol                                                         {$1}
     | declare Leol                                                          {$1}
 
 sequence:
-    | superterme Leol                                                           {$1}
+    | superterme                                                         {$1}
     | superterme Lseq sequence 
                               {App (Lambda (UnitType, get_var_name $3, $3), $1)}
 

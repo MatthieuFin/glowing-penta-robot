@@ -7,8 +7,16 @@ open Types ;;
 
 exception Field_Not_Found of string;;
 exception Unbound_Variable of string;;
+exception Bad_Type of string;;
+exception Unbound_Alias of string;;
+exception Unbound_Location of int;;
+exception Bad_Tag_Type of string * glowyType * glowyType;;
+exception Var_Tag_Not_Found of string;;
+exception Not_Record_Throw of term * string;;
 
 let tblOfSymbols = Hashtbl.create 1;;
+let mu = Hashtbl.create 1;;
+let sigma = Hashtbl.create 1;;
 
 (* Affecte la valeur value a l'alias alias *)
 let declare (alias : string) (value : term) = 
@@ -16,6 +24,21 @@ let declare (alias : string) (value : term) =
     value
 ;;
 
+(* enregistre un terme dans la mémoire *)
+let setRef (loc : int) (terme : term) (typ : glowyType) =
+    Hashtbl.replace mu loc terme;
+    Hashtbl.replace sigma loc typ;
+    Loc loc
+;;
+
+let isSetRef (loc : int) =
+    Hashtbl.mem mu loc
+;;
+
+let getRefValue (loc : int) =
+    try Hashtbl.find mu loc
+    with Not_found -> raise (Unbound_Location loc)
+;;
 (* Remplace les occurence de t1 (un nom de variable formelle) 
    dans t (un terme) par t2 (un terme) *)
 let rec substitute t1 t2 t = 
@@ -37,6 +60,10 @@ let rec substitute t1 t2 t =
       | Tag (label, value, typ) -> Tag (label, (substitute t1 t2 value), typ)
       | Case (term, l) -> Case (substitute t1 t2 term, substitute_cases t1 t2 l)
       | Fix terme -> Fix (substitute t1 t2 terme)
+      | Ref terme -> Ref (substitute t1 t2 terme)
+      | Deref terme -> Deref (substitute t1 t2 terme)
+      | Affect (term1, term2) -> Affect((substitute t1 t2 term1),(substitute t1 t2 term2))
+      | Loc label -> t (*TODO a verifier *)
 and substitute_in_record t1 t2 l =
     match l with
       | [] -> []
@@ -73,6 +100,7 @@ let get_var_name term =
           | Tag _ -> "\'t"
           | Projection _ -> "\'p"
           | Case _ -> "\'c"
+          | _ -> "\'"
     in
     "\'" ^ (aux term)
 ;;

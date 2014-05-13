@@ -25,6 +25,7 @@ and type_to_string typ =
       | AppType (t1,t2) -> (type_to_string t1)^" -> "^(type_to_string t2)
       | RcdType l -> "{" ^ (list_type_to_string l) ^ "}"
       | VarType l -> "<" ^ (list_type_to_string l) ^ ">"
+      | RefType t -> "Ref ("^(type_to_string t)^")"
 ;;
 
 let rec list_to_string l = 
@@ -66,9 +67,13 @@ and term_to_string term =
       | Projection (t, l) -> (term_to_string t) ^ "." ^ l
       | Case (t, l) -> "case " ^ (term_to_string t) ^ " of " ^ (case_list_to_string l)
       | Fix t -> term_to_string t
+      | Ref t -> "Ref "^(term_to_string t)
+      | Deref t -> "!"^(term_to_string t)
+      | Affect(t1, t2) -> (term_to_string t1)^" := "^(term_to_string t2)
+      | Loc t -> "Loc "^(string_of_int t)
 ;;
 
 
 let print_term term =
-    print_endline ((term_to_string term) ^ " : " ^ (type_to_string (typeof term [] [])))
+    print_endline ((term_to_string term) ^ " : " ^ (type_to_string (typeof term [])))
 ;;
