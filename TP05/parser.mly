@@ -121,7 +121,6 @@ projection :
     | valeurs Ldot Lident                                  {Projection ($1, $3)}
     
 elemtype :
-    | Lreft elemtype                                                    {RefType $2}
     | Lbool                                                               {Bool}
     | Lnat                                                                 {Nat}
     | LunitType                                                       {UnitType}
@@ -147,6 +146,7 @@ fieldlist :
     
 typage:
     | elemtype                                                              {$1}
+    | Lreft typage                                                    {RefType $2}
     | elemtype Larrow typage                                    {AppType($1,$3)}
     
 cases :
