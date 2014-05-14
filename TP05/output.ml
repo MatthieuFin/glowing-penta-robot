@@ -22,6 +22,7 @@ and type_to_string typ =
       | UnitType -> "Unit"
       | Bool -> "Bool"
       | Nat -> "Nat"
+      | Top -> "Top"
       | AppType (t1,t2) -> (type_to_string t1)^" -> "^(type_to_string t2)
       | RcdType l -> "{" ^ (list_type_to_string l) ^ "}"
       | VarType l -> "<" ^ (list_type_to_string l) ^ ">"

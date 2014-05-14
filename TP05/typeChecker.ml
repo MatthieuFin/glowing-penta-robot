@@ -139,8 +139,9 @@ and typeof t gamma  =
       | Unit -> UnitType
       | Cond (c, t, f) when typeof c gamma  = Bool-> begin
             let typeT = typeof t gamma 
-            and typeF = typeof f gamma 
-            in if (typeT = typeF) then typeT else raise (Bad_Type "Condition mal typée")
+            and typeF = typeof f gamma
+            in let typeTF = jointype typeT typeF
+	    in typeTF
         end
       | Succ (n) when (typeof n gamma ) = Nat -> Nat
       | Pred (n) when (typeof n gamma ) = Nat -> Nat
