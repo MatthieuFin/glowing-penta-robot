@@ -41,13 +41,14 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | '0'                 {Lzero}
   | "succ"              {Lsucc}
   | "pred"              {Lpred}
-  | "isZero"            {LisZero}
+  | "iszero"            {LisZero}
   | "Bool"              {Lbool}
   | "Nat"               {Lnat}
   | "Unit"              {LunitType}
   | "as"                {Las}
   | "of"                {Lof}
   | "()"                {Lunit}
+  | "unit"              {Lunit}
   | "in"                {Lin}
   | "case"              {Lcase}
   | ":="                {Laffect}
