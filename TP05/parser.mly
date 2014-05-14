@@ -91,7 +91,7 @@ functerm :
     | Lsucc terme                                                   {Succ $2}
     | Lpred terme                                                   {Pred $2}
     | LisZero terme                                               {IsZero $2}
-    | Llambda Lident Lsemcol typage Ldot terme            {Lambda ($4,$2,$6)}
+    | Llambda Lident Lsemcol typage Ldot superterme            {Lambda ($4,$2,$6)}
     | Lif terme Lthen terme Lelse terme             {Cond ($2, $4, $6)}
     | Lcase terme Lof  cases                              {Case ($2,$4)}
     | valeurs                                                               {$1}
