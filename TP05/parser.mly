@@ -51,7 +51,7 @@
 %token Lreft
 %token Lderef
 %token LdefaultC
-%token Lstar
+%token Ltop
 
 %start line                       /* axiome */
 %type <Types.term> line    /* type de l'attribut de l'axiome */  
@@ -123,6 +123,7 @@ projection :
 elemtype :
     | Lbool                                                               {Bool}
     | Lnat                                                                 {Nat}
+    | Ltop                                                                 {Top}
     | LunitType                                                       {UnitType}
     | vartype                                                               {$1}
     | rectype                                                               {$1}
@@ -130,6 +131,7 @@ elemtype :
 
     
 rectype :
+    | Lleftb Lrightb                                                 {RcdType []}
     | Lleftb rectypelist Lrightb                                   {RcdType($2)}
    
 rectypelist :

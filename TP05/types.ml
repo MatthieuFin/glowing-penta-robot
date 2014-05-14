@@ -12,6 +12,7 @@ type glowyType =
     | RcdType of (string * glowyType) list
     | VarType of (string * glowyType) list
     | RefType of glowyType
+    | Top
 ;;
 
 type term = 

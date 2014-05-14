@@ -13,6 +13,7 @@ exception Unbound_Location of int;;
 exception Bad_Tag_Type of string * glowyType * glowyType;;
 exception Var_Tag_Not_Found of string;;
 exception Not_Record_Throw of term * string;;
+exception Cant_Meet of glowyType * glowyType;;
 
 let tblOfSymbols = Hashtbl.create 1;;
 let mu = Hashtbl.create 1;;

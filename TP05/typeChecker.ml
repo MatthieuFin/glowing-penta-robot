@@ -1,6 +1,20 @@
 open Types;;
 open Tools;;
 
+let rec add_missing l1 l2 =
+    match l2 with
+      | [] -> l1
+      | (label, value)::l2' -> begin
+            let rec add_without_double l (lab, valu) =
+                match l with
+                  | [] -> [lab, valu]
+                  | (label, value)::l' when label = lab -> l
+                  | (label, value)::l' -> (label, value)::(add_without_double l' (lab, valu))
+            in add_missing (add_without_double l1 (label, value)) l2'
+        end
+;;
+
+
 let rec getType var gamma  = 
     let rec aux v g =
         match g with
@@ -13,6 +27,11 @@ and getRcdFieldType l gamma =
     match l with
       | [] -> []
       | (label, value):: l' -> (label, (typeof value gamma ))::(getRcdFieldType l' gamma)
+and getRcdTypeField l lab =
+    match l with
+      | [] -> raise (Not_found)
+      | (label, typ)::l' when lab = label -> typ
+      | _::l' -> getRcdTypeField l' lab
 and getLocType l = try Hashtbl.find sigma l
     with Not_found -> raise (Unbound_Location l)
 and get_variant_field_type var_list alias =
@@ -50,6 +69,68 @@ and compute_case_type case_list type_list gamma   =
                     (typeof term 
                         ((alias,
                              get_variant_field_type type_list label)::gamma) ) )
+and jointype s t =
+    match (s ,t) with
+      | (s', t') when s' = t' -> t'
+      | (AppType (sfp, sft), AppType (tfp, tft)) ->
+        AppType (meettype sfp tfp, jointype sft tft)
+      | (RcdType sl, RcdType tl) -> begin
+            let rec joinlists l1 l2 ret =
+                match l1 with
+                  | [] -> ret
+                  | (label, trcd1)::l1' -> begin
+                        match l2 with
+                          | [] -> joinlists l1' l2 ret
+                          | (lab, trcd2)::l2' when lab = label -> 
+                          joinlists l1' l2 ((lab, jointype trcd1 trcd2)::ret)
+                          | (lab, trcd2)::l2' -> joinlists l1 l2' ret
+                    end
+            in RcdType (joinlists sl tl [])
+        end
+      | _ -> Top
+
+and meettype s t = 
+    match (s, t) with
+      | (_, Top) | (Top, _) -> Top
+      | (s', t') when s' = t' -> s'
+      | (AppType (sfp, sft), AppType (tfp, tft)) ->
+        AppType (jointype sfp tfp, meettype sft tft)
+      | (RcdType sl, RcdType tl) -> begin
+            let rec meet l (label, value) =
+                match l with
+                    | [] -> (label, value)
+                    | (lab, valu)::l' when label = lab -> (lab, meettype value valu)
+                    | (lab, valu)::l' -> meet l' (label, value)
+            in
+            let rec meetlists l1 l2 ret =
+                match l1 with
+                  | [] -> add_missing ret l2
+                  | (label, value)::l1' -> meetlists l1' l2 ((meet l2 (label, value))::ret)
+            in RcdType (meetlists sl tl [])
+            end
+      | _ -> raise (Cant_Meet (s, t))
+        (*Indique si subtype est sous type de typ *)
+and subtype s t = 
+    match (s, t) with
+      | (_, Top) -> true
+      | (t, s) when t = s -> true
+      | (AppType (s1, s2), AppType (t1, t2)) -> (subtype t1 s1) && (subtype s2 t2)
+      | (RcdType sl, RcdType tl) -> try subtype_lists sl tl with Not_found -> false
+      | _ -> false
+and subtype_lists sl tl =
+    match tl with
+      | [] -> true
+      | (tlabel, ttype)::tl' -> begin
+(*         let ttype = try getRcdTypeField tl slabel with Not_found -> false in *)
+        try (subtype (getRcdTypeField sl tlabel) ttype) &&
+        (subtype_lists sl tl') with Not_found -> false
+        end
+      
+(* si t == TOP -> vrai
+  si s = t -> vrai
+  si s = AppType(s1, s2) && t = AppType (t1, t2) -> subtype t1 s1 && subtype s2 t2
+  
+  *)
 and typeof t gamma  = 
     match t with
       | True -> Bool
@@ -69,7 +150,7 @@ and typeof t gamma  =
             let type_t1 = (typeof t1 gamma )
             and type_t2 = (typeof t2 gamma )
             in match type_t1 with
-                | AppType (t11, t12) when t11 = type_t2 -> t12
+                | AppType (t11, t12) when (subtype type_t2 t11) -> t12
                 | _ -> raise (Bad_Type "Application mal typée")
         end
       | Lambda (typ, var, t) -> AppType(typ, (typeof t ((var, typ)::gamma)) )
