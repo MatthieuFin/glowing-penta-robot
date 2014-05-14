@@ -51,8 +51,9 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | "in"                {Lin}
   | "case"              {Lcase}
   | ":="                {Laffect}
+  | "ref"               {Lref}
   | "Ref"               {Lref}
-  | "Deref"             {Lderef}
+  | "deref"             {Lderef}
   | "!"                 {Lderef}
   | ['a'-'z'] ['a' - 'z' 'A'-'Z' '0'-'9']*  {Lident (Lexing.lexeme lexbuf)}
   | _ as c              {(Printf.printf "Erreur : %c\n" c);failwith "lexème inattendu"}

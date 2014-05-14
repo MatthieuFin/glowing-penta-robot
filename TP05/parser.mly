@@ -48,6 +48,7 @@
 %token Lbarrow
 %token Lletrec
 %token Lref
+%token Lreft
 %token Lderef
 %token LdefaultC
 %token Lstar
@@ -120,13 +121,14 @@ projection :
     | valeurs Ldot Lident                                  {Projection ($1, $3)}
     
 elemtype :
+    | Lreft elemtype                                                    {RefType $2}
     | Lbool                                                               {Bool}
     | Lnat                                                                 {Nat}
     | LunitType                                                       {UnitType}
     | vartype                                                               {$1}
     | rectype                                                               {$1}
     | Lleftp typage Lrightp                                                 {$2}
-    | elemtype Lstar                                                {RefType $1}
+
     
 rectype :
     | Lleftb rectypelist Lrightb                                   {RcdType($2)}
