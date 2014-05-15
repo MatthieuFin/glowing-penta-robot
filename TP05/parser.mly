@@ -6,6 +6,7 @@
 %{
   open Types ;;
   open Tools ;;
+  
 %}
 
 %token Leol
@@ -56,6 +57,7 @@
 %token Ltry
 %token Lwith
 %token Lraise
+%token Lexception
 
 %start line                       /* axiome */
 %type <Types.term> line    /* type de l'attribut de l'axiome */  
@@ -67,6 +69,12 @@
 line :
     | sequence Leol                                                        {$1}
     | declare  Leol                                                        {$1}
+    | Lexception Lident Lof typage Leol         
+                                {type_exceptions := begin
+                                    match !type_exceptions with
+                                        | VarType l -> VarType (($2, $4)::l)
+                                    end; Unit
+                                }
 
 sequence:
     | superterme                                                           {$1}
