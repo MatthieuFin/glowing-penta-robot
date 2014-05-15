@@ -210,7 +210,7 @@ and typeof t gamma  =
             match typeof (Tag (label, term, typ)) gamma with
               | VarType l -> get_variant_field_type l label
         end
-      | Raise (Var v) -> ExcptType 
+      | Raise (Var v) -> !type_exceptions 
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       
