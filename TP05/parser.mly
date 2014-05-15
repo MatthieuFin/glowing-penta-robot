@@ -52,6 +52,10 @@
 %token Lderef
 %token LdefaultC
 %token Ltop
+%token Lerror
+%token Ltry
+%token Lwith
+%token Lraise
 
 %start line                       /* axiome */
 %type <Types.term> line    /* type de l'attribut de l'axiome */  
@@ -74,6 +78,17 @@ superterme :
     | Lletrec Lident Lsemcol typage Lequal superterme Lin superterme      
                                         {Name($2, Fix (Lambda($4, $2, $6)), $8)}
     | Llet Lident Lequal superterme Lin superterme           {Name ($2, $4, $6)}
+    | Ltry superterme Lwith functerm                              {Try ($2, $4)}
+    | Ltry superterme Lwith Lident Lident Larrow terme
+                    {Try(
+                        $2,
+                        Lambda (!type_exceptions, 
+                                "$",
+                                Case (Var "$",
+                                      [($4,$5,$7);
+                                       ("_","_", Raise(Var"$"))
+                                    ]) ))}
+    | Lraise Lident terme                {Raise (Tag($2, $3, !type_exceptions))}
     | valeurs Laffect superterme                               {Affect($1,$3)}
     
 
@@ -105,6 +120,7 @@ valeurs :
     | Lunit                                                               {Unit}
     | record                                                                {$1}
     | projection                                                            {$1}
+    | Lerror                                                             {Error}
     | tag                                                                   {$1}
     
 tag :

@@ -78,7 +78,7 @@ f var ;;
 letrec add : Nat -> Nat -> Nat =
   lambda m : Nat.
     lambda n : Nat.
-      if isZero m then
+      if iszero m then
         n
       else
         add (pred m) (succ n)

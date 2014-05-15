@@ -72,6 +72,7 @@ and compute_case_type case_list type_list gamma   =
 and jointype s t =
     match (s ,t) with
       | (s', t') when s' = t' -> t'
+      | (Thrown, t') | (t', Thrown) -> t'
       | (AppType (sfp, sft), AppType (tfp, tft)) ->
         AppType (meettype sfp tfp, jointype sft tft)
       | (RcdType sl, RcdType tl) -> begin
@@ -113,9 +114,9 @@ and meettype s t =
 and subtype s t = 
     match (s, t) with
       | (_, Top) -> true
-      | (t, s) when t = s -> true
+      | (s', t') when s' = t' -> true
       | (AppType (s1, s2), AppType (t1, t2)) -> (subtype t1 s1) && (subtype s2 t2)
-      | (RcdType sl, RcdType tl) -> try subtype_lists sl tl with Not_found -> false
+      | (RcdType sl, RcdType tl) -> (try subtype_lists sl tl with Not_found -> false)
       | _ -> false
 and subtype_lists sl tl =
     match tl with
@@ -147,6 +148,8 @@ and typeof t gamma  =
       | Pred (n) when (typeof n gamma ) = Nat -> Nat
       | IsZero (n) when (typeof n gamma ) = Nat -> Bool
       | Var (s) -> getType s gamma 
+      | App (Error, t) -> Thrown
+      | App (t, Error) -> Thrown
       | App (t1, t2) -> begin
             let type_t1 = (typeof t1 gamma )
             and type_t2 = (typeof t2 gamma )
@@ -171,7 +174,7 @@ and typeof t gamma  =
             let t_type = typeof t gamma  in
             match t_type with
               | VarType type_list -> compute_case_type case_list type_list gamma 
-              | _ -> failwith "YOLO !"
+              | _ -> raise (Bad_Type "Case mal typé")
         end
       | Fix terme -> begin
             let terme_type = typeof terme gamma  in
@@ -194,6 +197,20 @@ and typeof t gamma  =
             | _ -> raise (Bad_Type "Affect mal typé")
         end
       | Loc l -> let l_type = (getLocType l) in RefType l_type
+      | Error -> Thrown
+      | Try (t1, t2) when typeof t1 gamma = Thrown -> typeof t2 gamma
+      | Try (t1, Lambda (typ, alias, Case (Var v, cl))) -> begin
+            let type_list = 
+                match !type_exceptions with
+                  | VarType l -> l
+                in
+            compute_case_type cl type_list gamma
+        end
+      | Raise (Tag (label, term, typ)) -> begin
+            match typeof (Tag (label, term, typ)) gamma with
+              | VarType l -> get_variant_field_type l label
+        end
+      | Raise (Var v) -> ExcptType 
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       

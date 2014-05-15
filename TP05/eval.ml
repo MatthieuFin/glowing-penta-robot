@@ -13,7 +13,7 @@ let rec is_n_val t =
     match t with
       | Zero -> true
       | Succ t' -> is_n_val t'
-      | Pred t' -> is_n_val t'
+      | Pred t' when t' <> Zero -> is_n_val t'
       | _ -> false
 ;;
 
@@ -29,7 +29,7 @@ let rec is_val t  =
    | Tag (label, term, _) -> is_val term 
    | Record l -> is_val_record l 
    | Projection (term, label) -> is_val term 
-   | Loc index -> isValLoc index 
+   | Loc index -> isValLoc index
    | t' -> is_n_val t'
 and isValLoc index  =
     try let term = Hashtbl.find mu index in
@@ -54,7 +54,7 @@ let rec eval1 t gamma =
       | Cond (t1, t2, t3) ->  Cond ((eval1 t1 gamma), t2, t3)
       | Succ t1 ->  Succ (eval1 t1 gamma)
       | Pred (Succ t1)  ->  t1
-      | Pred Zero ->  Zero
+      | Pred Zero ->  Raise (Tag ("exnPred0", Zero, !type_exceptions))
       | Pred t1 ->  Pred (eval1 t1 gamma)
       | IsZero Zero ->  True
       | IsZero (Succ v) ->  False (*ATTENTION: on ne vérifie pas que v est une valeur *)
@@ -62,6 +62,8 @@ let rec eval1 t gamma =
       | Var x -> getValue x   
       | Lambda (ty, x, t') ->  t
       | App (Lambda(ty, x, t'), v2) when (is_val v2) -> (substitute x v2 t')
+      | App (Error, _) | App (_, Error) -> Error 
+      | App (Raise t, _) | App (_, Raise t) -> Raise t
       | App (t1, t2) when (is_val t1) -> App(t1, (eval1 t2 gamma))
       | App (t1, t2) -> App ((eval1 t1 gamma), t2)
       | Name (alias, t1, t2) when (is_val t1) ->  substitute alias t1 t2
@@ -82,7 +84,14 @@ let rec eval1 t gamma =
       | Deref t -> Deref (eval1 t gamma)
       | Affect((Loc l), t) when (isSetRef l) && (is_val t) -> (setRef l t (typeof t gamma))
       | Affect(t1, t2) -> Affect(eval1 t1 gamma, eval1 t2 gamma)  
-      | Loc t ->  Loc t   
+      | Loc t ->  Loc t  
+      | Try (t1, t2) when is_val t1 -> t1
+      | Try (Error, t2) -> t2
+      | Try (Raise v, t2) when is_val v -> App (t2 , v)
+      | Try (t1, t2) -> Try (eval1 t1 gamma, t2)
+      | Raise (Raise t) when is_val t -> Raise t
+      | Raise t -> Raise (eval1 t gamma)
+      | Error -> Error
 and eval_list l gamma= 
     match l with
         | [] -> []

@@ -53,7 +53,11 @@ rule lexer = parse                       (* nom de la fonction construite par oc
   | ":="                {Laffect}
   | "ref"               {Lref}
   | "Ref"               {Lreft}
+  | "error"             {Lerror}
+  | "raise"             {Lraise}
   | "deref"             {Lderef}
+  | "try"               {Ltry}
+  | "with"              {Lwith}
   | "!"                 {Lderef}
   | "Top"               {Ltop}
   | ['a'-'z'] ['a' - 'z' 'A'-'Z' '0'-'9' '_']*  {Lident (Lexing.lexeme lexbuf)}

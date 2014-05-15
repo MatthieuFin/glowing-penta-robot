@@ -14,6 +14,7 @@ exception Bad_Tag_Type of string * glowyType * glowyType;;
 exception Var_Tag_Not_Found of string;;
 exception Not_Record_Throw of term * string;;
 exception Cant_Meet of glowyType * glowyType;;
+exception Bad_Try of glowyType * glowyType;;
 
 let tblOfSymbols = Hashtbl.create 1;;
 let mu = Hashtbl.create 1;;
@@ -65,6 +66,9 @@ let rec substitute t1 t2 t =
       | Deref terme -> Deref (substitute t1 t2 terme)
       | Affect (term1, term2) -> Affect((substitute t1 t2 term1),(substitute t1 t2 term2))
       | Loc label -> t (*TODO a verifier *)
+      | Error -> Error
+      | Try (term1, term2) -> Try ((substitute t1 t2 term1), (substitute t1 t2 term2))
+      | Raise term -> Raise (substitute t1 t2 term)
 and substitute_in_record t1 t2 l =
     match l with
       | [] -> []

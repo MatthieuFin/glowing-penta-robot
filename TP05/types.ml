@@ -13,6 +13,8 @@ type glowyType =
     | VarType of (string * glowyType) list
     | RefType of glowyType
     | Top
+    | Thrown
+    | ExcptType
 ;;
 
 type term = 
@@ -37,4 +39,9 @@ type term =
     | Deref of term
     | Affect of term * term
     | Loc of int
+    | Try of term * term
+    | Raise of term
+    | Error
 ;;
+
+let type_exceptions = ref (VarType ([("exnPred0", Nat);("error", UnitType)]));;

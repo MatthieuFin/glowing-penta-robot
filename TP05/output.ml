@@ -27,6 +27,8 @@ and type_to_string typ =
       | RcdType l -> "{" ^ (list_type_to_string l) ^ "}"
       | VarType l -> "<" ^ (list_type_to_string l) ^ ">"
       | RefType t -> "Ref ("^(type_to_string t)^")"
+      | Thrown -> "erreur"
+      | ExcptType -> "exception"
 ;;
 
 let rec list_to_string l = 
@@ -72,6 +74,9 @@ and term_to_string term =
       | Deref t -> "!"^(term_to_string t)
       | Affect(t1, t2) -> (term_to_string t1)^" := "^(term_to_string t2)
       | Loc t -> "Loc "^(string_of_int t)
+      | Error -> "erreur"
+      | Try (t1, t2) -> "try " ^ (term_to_string t1) ^ " with " ^ (term_to_string t2)
+      | Raise (t1) -> "raise " ^ (term_to_string t1)
 ;;
 
 
