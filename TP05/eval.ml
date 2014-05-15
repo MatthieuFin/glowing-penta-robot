@@ -45,6 +45,15 @@ and is_val_record l =
 
 let rec eval1 t gamma =
     match t with
+    (* Règle remontée d'exception *)
+      | Cond (Raise (t'), _, _) | Cond (_, Raise (t'), _) | Cond (_,_,Raise t') -> Raise t'
+      | Succ (Raise (t')) | Pred (Raise (t')) | IsZero (Raise (t')) -> Raise t'
+      | Case (Raise (t'), case_list) -> Raise (t')
+      | Name (alias, Raise t', t2) -> substitute alias (Raise t') t2
+      | Tag (_, Raise(t'), _)-> Raise (t')
+      | Record [(_, Raise t')] -> Raise t'
+      | Fix (Raise t') -> Raise t'
+      (* Fin règle remontée d'exception *)
       | Unit -> t
       | True ->  t
       | False ->  t
@@ -89,13 +98,18 @@ let rec eval1 t gamma =
       | Try (Error, t2) -> t2
       | Try (Raise v, t2) when is_val v -> App (t2 , v)
       | Try (t1, t2) -> Try (eval1 t1 gamma, t2)
-      | Raise (Raise t) when is_val t -> Raise t
+      | Raise (Raise t) -> Raise t
       | Raise t -> Raise (eval1 t gamma)
       | Error -> Error
 and eval_list l gamma= 
     match l with
         | [] -> []
-        | (label, value)::l' -> (label, (examine value gamma ))::(eval_list l' gamma )
+        | (label, value)::l' -> begin
+        let v = (examine value gamma ) in 
+            match v with 
+              | Raise _ -> [label,v]
+              | _ -> (label, v)::(eval_list l' gamma )
+        end
 and compute_cases case_list label terme =
     match case_list with
       | [] -> raise Case_Not_Found

@@ -39,6 +39,18 @@ and get_variant_field_type var_list alias =
         | [] -> raise (Unbound_Alias alias)
         | (label, typ)::l' when label = alias -> typ
         | _::l' -> get_variant_field_type l' alias 
+and compute_exn_type case_list type_list gamma typ  =
+        match case_list with
+          | [] -> typ
+          | [(label, alias, term)] when label = "_" && alias = "_" && typeof term gamma = typ -> typ
+          | [("_", "_", term)] when typeof term gamma = ExcptType-> typ
+          | [("_", "_", term)] -> raise (Bad_Type "Cas mal typé")
+          | (label,alias,term)::l' 
+                when (typeof term 
+                        ((alias,
+                             get_variant_field_type type_list label)::gamma) )
+                     = typ -> compute_exn_type l' type_list gamma typ 
+          | _::l' -> raise (Bad_Type "Cas mal typé")
 (* Fonction qui détermine le type d'une instruction de la forme
     case <l1 = t> as <li : T> of 
          <l1 = x1> => res1
@@ -50,11 +62,13 @@ and get_variant_field_type var_list alias =
     Cette fonction prends en entrée une liste de triplet (label, alias, retour)
     et une liste de couples (labels, type) et un contexte.
  *)
-and compute_case_type case_list type_list gamma   =
+and compute_case_type case_list type_list gamma =
     let rec aux case_list type_list gamma typ  =
         match case_list with
           | [] -> typ
-          | [(label, alias, term)] when label = "_" && alias = "_" ->typeof term gamma
+          | [(label, alias, term)] when label = "_" && alias = "_" && typeof term gamma = typ -> typ
+          | [("_", "_", term)] when typeof term gamma = ExcptType-> typ
+          | [("_", "_", term)] -> raise (Bad_Type "Cas mal typé")
           | (label,alias,term)::l' 
                 when (typeof term 
                         ((alias,
@@ -204,13 +218,13 @@ and typeof t gamma  =
                 match !type_exceptions with
                   | VarType l -> l
                 in
-            compute_case_type cl type_list gamma
+            compute_exn_type cl type_list gamma (typeof t1 gamma)
         end
       | Raise (Tag (label, term, typ)) -> begin
             match typeof (Tag (label, term, typ)) gamma with
               | VarType l -> get_variant_field_type l label
         end
-      | Raise (Var v) -> !type_exceptions 
+      | Raise (Var v) -> ExcptType 
       | _ -> raise (Bad_Type "Terme mal typé !")
 ;;
       

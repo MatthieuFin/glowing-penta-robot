@@ -44,4 +44,4 @@ type term =
     | Error
 ;;
 
-let type_exceptions = ref (VarType ([("exnPred0", Nat);("error", UnitType)]));;
+let type_exceptions = ref (VarType ([("exnPred0", Nat);("failure", UnitType)]));;
